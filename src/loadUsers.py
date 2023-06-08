@@ -1,4 +1,4 @@
-
+from decrypt import Decrypt
 
 class ReadUsers:
     @staticmethod
@@ -11,10 +11,10 @@ class ReadUsers:
                 usersAux.append(line)
         count = len(usersAux)
 
-
+        decrypt = Decrypt()
         key = "miaproyecto12345"
         for i in range(0, count, 2):
-
-            userNew = [usersAux[i].lower(), usersAux[i+1].lower()]
+            decryptPass = decrypt.decrypt_message(usersAux[i+1],key)
+            userNew = [usersAux[i], decryptPass]
             usersReturn.append(userNew)
         return usersReturn
