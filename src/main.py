@@ -1,5 +1,5 @@
 
-import vistas.login as login
+import loginInterface as login
 
 def main():
     pass
