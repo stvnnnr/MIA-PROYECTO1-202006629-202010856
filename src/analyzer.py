@@ -102,6 +102,36 @@ def deleteCloud(path, name=None):
         deleteFile(currentId)
         print(f"Delete -name:'{path}' eliminado con exito.")
 
+#--------------------------------------------Copy----------------------------
+
+def copyLocal(source, destination):
+    ruta_actual = "d:\VACAS JUNIO 2023\Archivos\proyectoCopia\src"
+    if "\"" in source:
+        source = source.replace("\"", "")
+    if "/" in source:
+        source = source.replace("/", "\\")
+    if "\"" in destination:
+        destination = destination.replace("\"", "")
+    if "/" in destination:
+        destination = destination.replace("/", "\\")
+    rutaFrom = os.path.join(ruta_actual + source)
+    rutaTo = os.path.join(ruta_actual + destination)
+    print(rutaFrom)
+    print(rutaTo)
+    try:
+        if os.path.isfile(rutaFrom):
+            shutil.copy2(rutaFrom, rutaTo)
+            print(f"File '{rutaFrom}' copied successfully to '{rutaTo}'.")
+        elif os.path.isdir(rutaFrom):
+            foldername = os.path.basename(os.path.normpath(rutaFrom))
+            destination = os.path.join(rutaTo, foldername)
+            shutil.copytree(rutaFrom, destination)
+            print(f"Folder '{rutaFrom}' copied successfully to '{destination}'.")
+        else:
+            print("Invalid source path.")
+    except Exception as e:
+        print(f"Error while copying: {str(e)}")
+
 
 #----------------------------------------------Metodos de cloud----------------------------------------------------
 
