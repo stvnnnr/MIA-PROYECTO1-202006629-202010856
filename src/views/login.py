@@ -1,11 +1,12 @@
 import customtkinter
-from loadUsers import ReadUsers
+from src.utils.loadUsers import ReadUsers
 import customtkinter as ctk
+import main as view_main
 
 customtkinter.set_appearance_mode("dark")
 customtkinter.set_default_color_theme("blue")
 
-class LoginApp:
+class Login:
     def __init__(self):
         self.root = customtkinter.CTk()
         self.root.title("Login")
@@ -39,23 +40,33 @@ class LoginApp:
         self.button = customtkinter.CTkButton(master=self.frame, text="Login", command=self.login)
         self.button.pack(pady=10, padx=10)
 
+        # self alert 
+        self.alert = customtkinter.CTkLabel(master=self.frame, text="Usuarios o contraseña no coinciden", font=("Cooper", 15), text_color="red")
+        
+        
     def login(self):
+
+        # remove alert
+        self.alert.pack_forget()
         flag = False
         listUsers = ReadUsers().readTxtUsers()
         username = self.entry1.get()
         password = self.entry2.get()
         for user in listUsers:
             if user[0] == username and user[1] == password:
-                flag = True  # Las credenciales son válidas
+                flag = True
                 break
         if flag:
-            print("Nice")
+            # close login window
+            self.root.destroy()
+
+            # open principal window
+            ventana_principal = view_main.Main()
+            ventana_principal.run()
         else:
+            self.alert.pack(pady=10, padx=10)
             print("Bad")
+
 
     def run(self):
         self.root.mainloop()
-
-if __name__ == "__main__":
-    app = LoginApp()
-    app.run()
