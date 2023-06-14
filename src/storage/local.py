@@ -1,11 +1,25 @@
+from src.utils.parameters import get_parameters
+from src.utils.parameters import update_parameters
+
 def execute(command, parameters):
     function = globals().get(command)
     function(**parameters)
-    
-def configure(type, encrypt_log, encrypt_read, llave=None):
-    print("Function: configure")
-    print("Parameters: type={}, encrypt_log={}, encrypt_read={}, llave={}".format(type, encrypt_log, encrypt_read, llave))
 
+def configure(type, encrypt_log, encrypt_read, key=None):
+    bool_encrypt_log = bool(encrypt_log.lower() == 'true')
+    bool_encrypt_read = bool(encrypt_read.lower() == 'true')
+
+    parameters = get_parameters()
+    parameters["encrypt_log"] = bool_encrypt_log
+    parameters["encrypt_read"] = bool_encrypt_read
+    parameters["type"] = type
+    if key != None:
+        parameters["key"] = key
+
+    update_parameters(parameters)
+
+    return "Configuración exitosa\n"       
+    
 def create(name, path, body):
     print("Function: create")
     print("Parameters: name={}, path={}, body={}".format(name, path, body))

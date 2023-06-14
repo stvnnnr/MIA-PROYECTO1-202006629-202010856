@@ -2,6 +2,7 @@ import customtkinter
 from src.utils.loadUsers import ReadUsers
 import customtkinter as ctk
 import main as view_main
+from src.utils.bitacora import write_log
 
 customtkinter.set_appearance_mode("dark")
 customtkinter.set_default_color_theme("blue")
@@ -52,6 +53,7 @@ class Login:
         listUsers = ReadUsers().readTxtUsers()
         username = self.entry1.get()
         password = self.entry2.get()
+        write_log("Input - Inicio de sesión: " + username)
         for user in listUsers:
             if user[0] == username and user[1] == password:
                 flag = True
@@ -59,8 +61,8 @@ class Login:
         if flag:
             # close login window
             self.root.destroy()
-
             # open principal window
+            write_log("Output - Inicio de sesión: " + username)
             ventana_principal = view_main.Main()
             ventana_principal.run()
         else:

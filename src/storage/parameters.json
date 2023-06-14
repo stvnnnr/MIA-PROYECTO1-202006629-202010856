@@ -1,3 +1,6 @@
 {
-    "type": "local"
+    "encrypt_log": false,
+    "type": "local ",
+    "encrypt_read": false,
+    "key": "miaproyecto12345"
 }

@@ -1,0 +1,36 @@
+2023-06-13 15:53:00.502266 - Hola
+2023-06-13 15:53:24.692273 - adios
+13/06/2023 15:54:11 - adios
+13/06/2023 15:57:43 - Input - Inicio de la aplicación.
+13/06/2023 16:00:39 - Input - Inicio de la aplicación.
+13/06/2023 16:02:33 - Input - Inicio de la aplicación.
+13/06/2023 16:03:12 - Input - Inicio de la aplicación.
+13/06/2023 16:03:36 - Input - Inicio de la aplicación.
+13/06/2023 16:03:39 - Output - Ejecución de comando: configure. - parameters: {'type': 'local ', 'encrypt_log': 'false ', 'encrypt_read': 'false \r'}
+13/06/2023 17:03:47 - Input - Inicio de la aplicación.
+13/06/2023 17:36:58 - Input - Inicio de la aplicación.
+13/06/2023 17:37:59 - eeccc62d0f97be0564d54b43dcffea26483476194c5b72c2a283c274be18c8361e5e74a773da92150864e683f1a4e363
+13/06/2023 17:38:19 - eeccc62d0f97be0564d54b43dcffea26483476194c5b72c2a283c274be18c8361e5e74a773da92150864e683f1a4e363
+13/06/2023 17:38:23 - 563629e5c7f49861bca8d9da56339bd982b92c0970b87f479705a0278f7d53af33be3193f061f4dfb4d739429caa6bb1749718bbcae8a9dc46e3267c2162a7c8a323b25276e84582ff5ce4c3e1a7dbd9c9ea84145fcc7c582fd6fbdc06c610a80d5f2db32db9322a7238169914477e8b32216ebac82f4b16045dd578c794826b6d0fe8aa639f51724f3384c5c21fb277ed965ffb340a8b3e5e638582aa65ba48ef3d4a5e5a0a4da2099d1d55a38f2752
+13/06/2023 17:39:28 - eeccc62d0f97be0564d54b43dcffea26483476194c5b72c2a283c274be18c8361e5e74a773da92150864e683f1a4e363
+13/06/2023 17:39:34 - 563629e5c7f49861bca8d9da56339bd982b92c0970b87f479705a0278f7d53af33be3193f061f4dfb4d739429caa6bb1749718bbcae8a9dc46e3267c2162a7c8a323b25276e84582ff5ce4c3e1a7dbd9c9ea84145fcc7c582fd6fbdc06c610a80d5f2db32db9322a7238169914477e8b32216ebac82f4b16045dd578c794826b6d0fe8aa639f51724f3384c5c21fb277ed965ffb340a8b3e5e638582aa65ba48ef3d4a5e5a0a4da2099d1d55a38f2752
+13/06/2023 17:43:49 - Input - Inicio de la aplicación.
+13/06/2023 17:45:39 - Input - Inicio de la aplicación.
+13/06/2023 17:46:09 - Input - Inicio de la aplicación.
+13/06/2023 17:46:17 - Input - Inicio de la aplicación.
+13/06/2023 17:48:53 - eeccc62d0f97be0564d54b43dcffea26483476194c5b72c2a283c274be18c8361e5e74a773da92150864e683f1a4e363
+13/06/2023 17:49:05 - eeccc62d0f97be0564d54b43dcffea26483476194c5b72c2a283c274be18c8361e5e74a773da92150864e683f1a4e363
+13/06/2023 18:05:08 - eeccc62d0f97be0564d54b43dcffea26483476194c5b72c2a283c274be18c8361e5e74a773da92150864e683f1a4e363
+13/06/2023 18:05:27 - 563629e5c7f49861bca8d9da56339bd982b92c0970b87f479705a0278f7d53af33be3193f061f4dfb4d739429caa6bb1749718bbcae8a9dc46e3267c2162a7c8a323b25276e84582ff5ce4c3e1a7dbd936f6262d476a7eda4b29973c63d49c37b7d61d43d180f8b32443c261c48dad95ab02ead57cc387a47bea5b67fc3a0e233b86a4ce58bb86941cf54cddfd839ad03a31caa89be82ae3563b421ced38511b911082891a6ab3c917b68af3609f86f2
+13/06/2023 18:05:40 - eeccc62d0f97be0564d54b43dcffea26483476194c5b72c2a283c274be18c8361e5e74a773da92150864e683f1a4e363
+13/06/2023 18:05:48 - 563629e5c7f49861bca8d9da56339bd982b92c0970b87f479705a0278f7d53af33be3193f061f4dfb4d739429caa6bb1749718bbcae8a9dc46e3267c2162a7c8a323b25276e84582ff5ce4c3e1a7dbd936f6262d476a7eda4b29973c63d49c37b7d61d43d180f8b32443c261c48dad95ab02ead57cc387a47bea5b67fc3a0e233b86a4ce58bb86941cf54cddfd839ad03a31caa89be82ae3563b421ced38511b911082891a6ab3c917b68af3609f86f2
+13/06/2023 18:05:48 - Output - Comando: Configure -type->local -encrypt_log->false -encrypt_read->false , response: Configuración exitosa
+
+13/06/2023 18:13:00 - Input - Inicio de la aplicación.
+13/06/2023 18:13:08 - Input - Comando: Configure -type->local -encrypt_log->false -encrypt_read->false , parameters: {'type': 'local ', 'encrypt_log': 'false ', 'encrypt_read': 'false \r'}
+13/06/2023 18:13:08 - Output - Comando: Configure -type->local -encrypt_log->false -encrypt_read->false , response: Configuración exitosa
+
+13/06/2023 18:13:17 - Input - Comando: create -name->prueba1.txt -path->/carpeta1/ -body->”Este es el contenido del
+archivo 1”, parameters: {'name': 'prueba1.txt ', 'path': '/carpeta1/ ', 'body': '”Este es el contenido del\narchivo 1”\r'}
+13/06/2023 18:13:29 - Input - Comando: create -name->prueba1.txt -path->/carpeta1/ -body->”Este es el contenido del
+archivo 1”, parameters: {'name': 'prueba1.txt ', 'path': '/carpeta1/ ', 'body': '”Este es el contenido del\narchivo 1”'}

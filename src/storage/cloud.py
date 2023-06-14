@@ -2,10 +2,6 @@ def execute(command, parameters):
     function = globals().get(command)
     function(**parameters)
 
-def configure(type, encrypt_log, encrypt_read, llave=None):
-    print("Function: configure")
-    print("Parameters: type={}, encrypt_log={}, encrypt_read={}, llave={}".format(type, encrypt_log, encrypt_read, llave))
-
 def create(name, path, body):
     print("Function: create")
     print("Parameters: name={}, path={}, body={}".format(name, path, body))
