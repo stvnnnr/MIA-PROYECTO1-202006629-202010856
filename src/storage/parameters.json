@@ -2,7 +2,7 @@
     "encrypt_log": false,
     "type": "cloud",
     "encrypt_read": false,
-    "key": "123456789 ",
+    "key": "miaproyecto12345",
     "init_exec": false,
     "count_exec_local": 0,
     "count_exec_nube": 0

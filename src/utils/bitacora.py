@@ -5,12 +5,13 @@ from src.utils.parameters import get_parameters
 @staticmethod
 def write_log(message):
     encrypt_log = get_parameters()["encrypt_log"]
+    key = get_parameters()["key"]
     path = create_folder()
     with open(f'{path}\log.txt' , "a") as file:
         date = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
         if encrypt_log:
             encrypt = Encrypt()
-            message = encrypt.encrypt_message(message, get_parameters()["key"])
+            message = encrypt.encrypt_message(message, key)
         file.write(f'{date} - {message}\n')
 
 def create_folder():
