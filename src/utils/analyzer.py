@@ -7,8 +7,8 @@ class Analyzer():
             {
                 'name': 'configure', 
                 'description': 'comando para configurar el tipo de almacenamiento', 
-                'parameters': ["type", "encrypt_log", "encrypt_read", "llave"],
-                'optional': ["llave"],
+                'parameters': ["type", "encrypt_log", "encrypt_read", "key"],
+                'optional': ["key"],
             },
             {
                 'name': 'create', 

@@ -11,7 +11,6 @@ class Console(customtkinter.CTkFrame):
 
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
-        print(parameters.get_parameters()["type"])
         self.grid_columnconfigure((0, 1, 2, 3, 4, 5, 6, 7, 8, 9), weight=1)
         self.grid_rowconfigure((0, 1, 2, 3, 4, 5, 6, 7, 8, 9), weight=1)
 
@@ -83,6 +82,4 @@ class Console(customtkinter.CTkFrame):
                 self.read_command(line.replace("\n", ""))
             file.close()
 
-        
-       
-        return "Ejecución exitosa\n"        
+        return "Ejecución exitosa"        
