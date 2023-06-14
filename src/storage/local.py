@@ -3,17 +3,21 @@ from src.utils.parameters import update_parameters
 
 def execute(command, parameters):
     function = globals().get(command)
-    # response = function(**parameters)
+    response = function(**parameters)
     
-    return command + " ejectuado"
-
+    parameters = get_parameters()
+    if parameters["init_exec"]:
+        parameters["count_exec_local"] = parameters["count_exec_local"] + 1
+    update_parameters(parameters)
+    return response
+    
 def configure(type, encrypt_log, encrypt_read, key=None):
     bool_encrypt_log = bool(encrypt_log.lower() == 'true')
     bool_encrypt_read = bool(encrypt_read.lower() == 'true')
-
     parameters = get_parameters()
     parameters["encrypt_log"] = bool_encrypt_log
     parameters["encrypt_read"] = bool_encrypt_read
+    type = type.replace(" ", "")
     parameters["type"] = type
     if key != None:
         parameters["key"] = key
@@ -26,7 +30,8 @@ def create(name, path, body):
     print("Function: create")
     print("Parameters: name={}, path={}, body={}".format(name, path, body))
 
-    return "Archivo creado exitosamente"
+
+    return "Archivo creado exitosamente: name={}, path={}, body={}".format(name, path, body)
 
 def delete(path, name=None):
     print("Function: delete")

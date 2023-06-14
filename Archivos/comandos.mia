@@ -1,2 +1,12 @@
-configure -type->local -encrypt_log->true -encrypt_read->true
-encrpit
+Configure -type->local -encrypt_log->false -encrypt_read->false -key->123456789 
+create -name->prueba1.txt -path->/carpeta1/ -body->"Este es el contenido delarchivo 1"
+create -name->prueba1.txt -path->/carpeta1/ -body->"Este es el contenido delarchivo 1"
+create -name->prueba1.txt -path->/carpeta1/ -body->"Este es el contenido delarchivo 1"
+create -name->prueba1.txt -path->/carpeta1/ -body->"Este es el contenido delarchivo 1"
+create -name->prueba1.txt -path->/carpeta1/ -body->"Este es el contenido delarchivo 1"
+Configure -type->cloud -encrypt_log->false -encrypt_read->false -key->123456789 
+create -name->prueba1.txt -path->/carpeta1/ -body->"Este es el contenido delarchivo 1"
+create -name->prueba1.txt -path->/carpeta1/ -body->"Este es el contenido delarchivo 1"
+create -name->prueba1.txt -path->/carpeta1/ -body->"Este es el contenido delarchivo 1"
+create -name->prueba1.txt -path->/carpeta1/ -body->"Este es el contenido delarchivo 1"
+create -name->prueba1.txt -path->/carpeta1/ -body->"Este es el contenido delarchivo 1"

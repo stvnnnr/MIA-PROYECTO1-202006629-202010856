@@ -5,6 +5,7 @@ import src.storage.cloud as storage_cloud
 import src.storage.local as storage_local
 from src.utils.bitacora import write_log
 from src.utils.parameters import get_parameters
+from src.utils.parameters import update_parameters
 from src.utils.decrypt import Decrypt
 
 class Console(customtkinter.CTkFrame):
@@ -56,13 +57,19 @@ class Console(customtkinter.CTkFrame):
         path = path.replace("//", "/")
         path = path.replace("/", "\\")     
 
-        # get fisrt line of file and execute 
+        count = 1
         file = open(path, "r")
         command = file.readline().replace("\n", "")
         self.read_command(command)
         file.close()
 
-        if parameters.get_parameters()["encrypt_read"]:
+        parameters = get_parameters()
+        parameters["init_exec"] = True
+        parameters["count_exec_local"] = 0
+        parameters["count_exec_nube"] = 0
+        update_parameters(parameters)
+        
+        if get_parameters()["encrypt_read"]:
             file = open(path, "r")
             file.readline()
             decrypt = Decrypt()
@@ -70,16 +77,28 @@ class Console(customtkinter.CTkFrame):
             decrypt_lines = decrypt.decrypt_message(file.readline().replace("\n", ""),key)
             file.close()
 
-            # reccorer decrypt lines and execute
             decrypt_lines = decrypt_lines.split("\n")
             for line in decrypt_lines:
                 if line != "":
                     self.read_command(line)
+                    count += 1
         else:
             file = open(path, "r")
             file.readline()
             for line in file:
                 self.read_command(line.replace("\n", ""))
+                count += 1
             file.close()
+        
+        parameters = get_parameters()
+        self.console.insert("end", "Comandos ejecutados en local: " + str(parameters["count_exec_local"]) + "\n")
+        self.console.insert("end", "Comandos ejecutados en nube: " + str(parameters["count_exec_nube"]) + "\n")
+        
+        write_log("Output - " + "Comandos ejecutados en local: " + str(parameters["count_exec_local"]))
+        write_log("Output - " + "Comandos ejecutados en nube: " + str(parameters["count_exec_nube"]))
 
-        return "Ejecución exitosa"        
+        parameters["count_exec_local"] = 0
+        parameters["count_exec_nube"] = 0
+        parameters["init_exec"] = False
+        update_parameters(parameters)
+        return "Ejecución exitosa, {} comandos ejecutados".format(count)        

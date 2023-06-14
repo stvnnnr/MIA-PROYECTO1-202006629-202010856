@@ -1,10 +1,23 @@
+from src.utils.parameters import get_parameters
+from src.utils.parameters import update_parameters
+
 def execute(command, parameters):
     function = globals().get(command)
-    function(**parameters)
+    response = function(**parameters)
+
+    parameters = get_parameters()
+    if parameters["init_exec"]:
+        parameters["count_exec_nube"] = parameters["count_exec_nube"] + 1
+    update_parameters(parameters)
+
+    return response
 
 def create(name, path, body):
     print("Function: create")
     print("Parameters: name={}, path={}, body={}".format(name, path, body))
+
+
+    return "Archivo creado exitosamente: name={}, path={}, body={}".format(name, path, body)
 
 def delete(path, name=None):
     print("Function: delete")
