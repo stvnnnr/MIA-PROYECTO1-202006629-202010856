@@ -34,3 +34,29 @@
 archivo 1”, parameters: {'name': 'prueba1.txt ', 'path': '/carpeta1/ ', 'body': '”Este es el contenido del\narchivo 1”\r'}
 13/06/2023 18:13:29 - Input - Comando: create -name->prueba1.txt -path->/carpeta1/ -body->”Este es el contenido del
 archivo 1”, parameters: {'name': 'prueba1.txt ', 'path': '/carpeta1/ ', 'body': '”Este es el contenido del\narchivo 1”'}
+13/06/2023 18:25:46 - Input - Inicio de la aplicación.
+13/06/2023 18:26:14 - Input - Comando: exec -path->C:\Users\Edwin Sandoval\Documents\universidad\archivos\Proyecto1\Archivos\comandos.mia, parameters: ["El command 'exec' no es válido."]
+13/06/2023 18:26:14 - error: El command 'exec' no es válido.
+13/06/2023 18:26:14 - Error: cannot access local variable 'response_command' where it is not associated with a value
+13/06/2023 18:28:20 - Input - Inicio de la aplicación.
+13/06/2023 18:29:18 - Input - Comando: exec -path->C:\Users\Edwin Sandoval\Documents\universidad\archivos\Proyecto1\Archivos\comandos.mia, parameters: {'path': 'C:\\Users\\Edwin Sandoval\\Documents\\universidad\\archivos\\Proyecto1\\Archivos\\comandos.mia'}
+13/06/2023 18:29:18 - Input - Comando: create -name->prueba1.txt -path->/"carpeta1"/ -body->"Este es el contenido del archivo 1", parameters: {'name': 'prueba1.txt ', 'path': '/"carpeta1"/ ', 'body': 'Este es el contenido del archivo 1'}
+13/06/2023 18:29:18 - Error: unsupported operand type(s) for +: 'NoneType' and 'str'
+13/06/2023 18:29:18 - Output - Comando: exec -path->C:\Users\Edwin Sandoval\Documents\universidad\archivos\Proyecto1\Archivos\comandos.mia, response: Ejecución exitosa
+
+13/06/2023 18:30:14 - Input - Inicio de la aplicación.
+13/06/2023 18:30:19 - Input - Comando: exec -path->C:\Users\Edwin Sandoval\Documents\universidad\archivos\Proyecto1\Archivos\comandos.mia, parameters: {'path': 'C:\\Users\\Edwin Sandoval\\Documents\\universidad\\archivos\\Proyecto1\\Archivos\\comandos.mia'}
+13/06/2023 18:30:19 - Input - Comando: create -name->prueba1.txt -path->/"carpeta1"/ -body->"Este es el contenido del archivo 1", parameters: {'name': 'prueba1.txt ', 'path': '/"carpeta1"/ ', 'body': 'Este es el contenido del archivo 1'}
+13/06/2023 18:31:09 - Input - Inicio de la aplicación.
+13/06/2023 18:31:12 - Input - Comando: exec -path->C:\Users\Edwin Sandoval\Documents\universidad\archivos\Proyecto1\Archivos\comandos.mia, parameters: {'path': 'C:\\Users\\Edwin Sandoval\\Documents\\universidad\\archivos\\Proyecto1\\Archivos\\comandos.mia'}
+13/06/2023 18:31:12 - Input - Comando: create -name->prueba1.txt -path->/"carpeta1"/ -body->"Este es el contenido del archivo 1", parameters: {'name': 'prueba1.txt ', 'path': '/"carpeta1"/ ', 'body': 'Este es el contenido del archivo 1'}
+13/06/2023 18:31:26 - Input - Inicio de la aplicación.
+13/06/2023 18:31:29 - Input - Comando: exec -path->C:\Users\Edwin Sandoval\Documents\universidad\archivos\Proyecto1\Archivos\comandos.mia, parameters: {'path': 'C:\\Users\\Edwin Sandoval\\Documents\\universidad\\archivos\\Proyecto1\\Archivos\\comandos.mia'}
+13/06/2023 18:31:29 - Input - Comando: create -name->prueba1.txt -path->/"carpeta1"/ -body->"Este es el contenido del archivo 1", parameters: {'name': 'prueba1.txt ', 'path': '/"carpeta1"/ ', 'body': 'Este es el contenido del archivo 1'}
+13/06/2023 18:32:24 - Input - Inicio de la aplicación.
+13/06/2023 18:32:27 - Input - Comando: exec -path->C:\Users\Edwin Sandoval\Documents\universidad\archivos\Proyecto1\Archivos\comandos.mia, parameters: {'path': 'C:\\Users\\Edwin Sandoval\\Documents\\universidad\\archivos\\Proyecto1\\Archivos\\comandos.mia'}
+13/06/2023 18:32:27 - Input - Comando: create -name->prueba1.txt -path->/"carpeta1"/ -body->"Este es el contenido del archivo 1", parameters: {'name': 'prueba1.txt ', 'path': '/"carpeta1"/ ', 'body': 'Este es el contenido del archivo 1'}
+13/06/2023 18:32:27 - Output - Comando: create -name->prueba1.txt -path->/"carpeta1"/ -body->"Este es el contenido del archivo 1", response: Archivo creado exitosamente
+
+13/06/2023 18:32:27 - Output - Comando: exec -path->C:\Users\Edwin Sandoval\Documents\universidad\archivos\Proyecto1\Archivos\comandos.mia, response: Ejecución exitosa
+

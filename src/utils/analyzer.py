@@ -52,7 +52,7 @@ class Analyzer():
                 'parameters': [],
             },
             {
-                'name': 'backup',
+                'name': 'exec',
                 'description': 'comando para renombrar',
                 'parameters': ["path"],
             }

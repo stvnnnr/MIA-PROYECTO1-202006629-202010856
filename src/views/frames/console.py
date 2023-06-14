@@ -26,29 +26,28 @@ class Console(customtkinter.CTkFrame):
         self.read_command(command)
 
     def read_command(self, command):
-        try: 
-            self.analyzer = analyzer.Analyzer()
-            response = self.analyzer.read_command(command)
-            write_log("Input - Comando: {}, parameters: {}".format(command, response[1]))
-            if response[0] != None:
-                if response[0].lower() == "configure":
-                    response_command = storage_local.configure(**response[1])
-                elif response[0].lower() == "exec":
-                    pass
-                elif parameters.get_parameters()["type"] == "cloud":
-                    response_command = storage_cloud.execute(response[0], response[1])
-                else:
-                    response_command = storage_local.execute(response[0], response[1])
-            else:
-                for alert in response[1]:
-                    self.console.insert("end", alert + "\n")
-                    write_log("error: {}".format(alert))
+        self.analyzer = analyzer.Analyzer()
+        response = self.analyzer.read_command(command)
+        write_log("Input - Comando: {}, parameters: {}".format(command, response[1]))
+        if response[0] != None:
+            if response[0].lower() == "configure":
+                response_command = storage_local.configure(**response[1])
 
-            self.console.insert("end", response_command + "\n")
-            write_log("Output - Comando: {}, response: {}".format(command, response_command))
-        except Exception as e:
-            self.console.insert("end", "Error: " + str(e) + "\n")
-            write_log("Error: " + str(e))
+            elif response[0].lower() == "exec":
+                response_command = self.exec(**response[1])
+
+            elif parameters.get_parameters()["type"] == "cloud":
+                response_command = storage_cloud.execute(response[0], response[1])
+                
+            else:
+                response_command = storage_local.execute(response[0], response[1])
+        else:
+            for alert in response[1]:
+                self.console.insert("end", alert + "\n")
+                write_log("error: {}".format(alert))
+
+        self.console.insert("end", response_command + "\n")
+        write_log("Output - Comando: {}, response: {}".format(command, response_command))
     
     def exec(self, path):
         path = path.replace("\\", "/")
@@ -59,8 +58,6 @@ class Console(customtkinter.CTkFrame):
         for line in file:
             command = line.replace("\n", "")
             self.read_command(command)
-
         file.close()
         
-        self.console.insert("end", "Ejecución exitosa\n")
-        write_log("Output - Comando: exec, response: Ejecución exitosa")        
+        return "Ejecución exitosa\n"        

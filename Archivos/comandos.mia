@@ -1,0 +1,1 @@
+create -name->prueba1.txt -path->/"carpeta1"/ -body->"Este es el contenido del archivo 1"
