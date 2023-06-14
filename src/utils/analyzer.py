@@ -34,7 +34,7 @@ class Analyzer():
             {
                 'name': 'rename',
                 'description': 'comando para renombrar',
-                'parameters': ["path", "new_name"],
+                'parameters': ["path", "name"],
             },
             {
                 'name': 'modify',

@@ -4,6 +4,9 @@ import src.utils.parameters as parameters
 import src.storage.cloud as storage_cloud
 import src.storage.local as storage_local
 from src.utils.bitacora import write_log
+from src.utils.parameters import get_parameters
+from src.utils.decrypt import Decrypt
+
 class Console(customtkinter.CTkFrame):
 
     def __init__(self, master, **kwargs):
@@ -52,12 +55,34 @@ class Console(customtkinter.CTkFrame):
     def exec(self, path):
         path = path.replace("\\", "/")
         path = path.replace("//", "/")
-        path = path.replace("/", "\\")
+        path = path.replace("/", "\\")     
 
+        # get fisrt line of file and execute 
         file = open(path, "r")
-        for line in file:
-            command = line.replace("\n", "")
-            self.read_command(command)
+        command = file.readline().replace("\n", "")
+        self.read_command(command)
         file.close()
+
+        if parameters.get_parameters()["encrypt_read"]:
+            file = open(path, "r")
+            file.readline()
+            decrypt = Decrypt()
+            key = get_parameters()["key"]
+            decrypt_lines = decrypt.decrypt_message(file.readline().replace("\n", ""),key)
+            file.close()
+
+            # reccorer decrypt lines and execute
+            decrypt_lines = decrypt_lines.split("\n")
+            for line in decrypt_lines:
+                if line != "":
+                    self.read_command(line)
+        else:
+            file = open(path, "r")
+            file.readline()
+            for line in file:
+                self.read_command(line.replace("\n", ""))
+            file.close()
+
         
+       
         return "Ejecución exitosa\n"        

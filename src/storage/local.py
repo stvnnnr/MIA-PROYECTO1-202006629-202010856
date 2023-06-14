@@ -3,9 +3,9 @@ from src.utils.parameters import update_parameters
 
 def execute(command, parameters):
     function = globals().get(command)
-    response = function(**parameters)
+    # response = function(**parameters)
     
-    return response
+    return command + " ejectuado"
 
 def configure(type, encrypt_log, encrypt_read, key=None):
     bool_encrypt_log = bool(encrypt_log.lower() == 'true')
@@ -20,17 +20,19 @@ def configure(type, encrypt_log, encrypt_read, key=None):
 
     update_parameters(parameters)
 
-    return "Configuración exitosa\n"       
+    return "Configuración exitosa: encrypt_log={}, encrypt_read={}, type={}, key={}".format(bool_encrypt_log, bool_encrypt_read, type, key)       
     
 def create(name, path, body):
     print("Function: create")
     print("Parameters: name={}, path={}, body={}".format(name, path, body))
 
-    return "Archivo creado exitosamente\n"
+    return "Archivo creado exitosamente"
 
 def delete(path, name=None):
     print("Function: delete")
     print("Parameters: path={}, name={}".format(path, name))
+
+    
 
 def copy(from_path, to):
     print("Function: copy")

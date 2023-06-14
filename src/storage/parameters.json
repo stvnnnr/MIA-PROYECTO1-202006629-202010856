@@ -1,6 +1,6 @@
 {
     "encrypt_log": false,
     "type": "local ",
-    "encrypt_read": false,
+    "encrypt_read": true,
     "key": "miaproyecto12345"
 }

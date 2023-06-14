@@ -3,6 +3,8 @@ from src.utils.loadUsers import ReadUsers
 import customtkinter as ctk
 import main as view_main
 from src.utils.bitacora import write_log
+from src.utils.parameters import get_parameters
+from src.utils.parameters import update_parameters
 
 customtkinter.set_appearance_mode("dark")
 customtkinter.set_default_color_theme("blue")
@@ -59,15 +61,19 @@ class Login:
                 flag = True
                 break
         if flag:
-            # close login window
             self.root.destroy()
-            # open principal window
+
+            parameters = get_parameters()
+            parameters["encrypt_log"] = False
+            parameters["encrypt_read"] = False
+            parameters["type"] = "local"
+            parameters["key"] = "miaproyecto12345"
+            update_parameters(parameters)            
             write_log("Output - Inicio de sesión: " + username)
             ventana_principal = view_main.Main()
             ventana_principal.run()
         else:
             self.alert.pack(pady=10, padx=10)
-            print("Bad")
 
 
     def run(self):
