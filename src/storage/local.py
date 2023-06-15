@@ -14,7 +14,7 @@ def execute(command, parameters):
         parameters["count_exec_local"] = parameters["count_exec_local"] + 1
     update_parameters(parameters)
     return response
-    
+
 def configure(type, encrypt_log, encrypt_read, key=None):
     bool_encrypt_log = bool(encrypt_log.lower() == 'true')
     bool_encrypt_read = bool(encrypt_read.lower() == 'true')
@@ -29,7 +29,7 @@ def configure(type, encrypt_log, encrypt_read, key=None):
     update_parameters(parameters)
 
     return "Configuración exitosa: encrypt_log={}, encrypt_read={}, type={}, key={}".format(bool_encrypt_log, bool_encrypt_read, type, key)       
-    
+
 def create(name, path, body):
     nameEntrada = name
     if "\"" in name:
@@ -125,6 +125,8 @@ def copy(from_path, to):
     # print("Parameters: from_path={}, to={}".format(from_path, to))
 
 def transfer(from_path, to, mode):
+    if mode == "cloud":
+        return(f"No se pudo mover porque no es el ambito esperado")
     sou = from_path
     des = to
     ruta_actual = myPath
