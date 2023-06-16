@@ -8,6 +8,14 @@ from src.utils.parameters import update_parameters
 
 directorio_credenciales = "credentials_module.json"
 
+myPath = (
+    r"d:\VACAS JUNIO 2023\Archivos\proyectoCopia\Archivos"
+    # r"C:\Users\Edwin Sandoval\Documents\universidad\archivos\Proyecto1\Archivos\local"
+)
+
+pathDownload = (
+    r"d:\VACAS JUNIO 2023\Archivos\proyectoCopia\Archivos\Archivos"
+)
 
 def execute(command, parameters):
     function = globals().get(command)
@@ -327,8 +335,58 @@ def add(path, body):
 
 
 def backup():
-    print("Function: backup")
-    print("Parameters: No parameters")
+    id_drive = "1eLTdiEeaTRGtNSQbkZ73SZPL_JOYcaen"
+    ruta_descarga = myPath
+    ruta_copia = pathDownload
+    downloadFile(id_drive,ruta_descarga)
+    rutaFrom = ruta_copia
+    rutaTo = ruta_descarga
+    try:
+        if os.path.exists(rutaFrom):
+            if os.path.isfile(rutaFrom):
+                filename = os.path.basename(rutaFrom)
+                rutaNew = os.path.join(rutaTo+filename)
+                if os.path.exists(rutaNew):
+                    filename = os.path.basename(rutaFrom)
+                    filename_without_extension, file_extension = os.path.splitext(filename)
+                    i = 1
+                    while os.path.exists(os.path.join(rutaTo+f"{filename_without_extension}({i}){file_extension}")):
+                        i += 1
+                    new_filename = f"{filename_without_extension}({i}){file_extension}"
+                    new_filepath = os.path.join(rutaTo+new_filename)
+                    shutil.move(rutaFrom, new_filepath)
+                else:
+                    shutil.move(rutaFrom, rutaTo)
+            elif os.path.isdir(rutaFrom):
+                for item in os.listdir(rutaFrom):
+                    source = os.path.join(rutaFrom +"\\"+ item)
+                    rutaNew = os.path.join(rutaTo+"\\"+item)
+                    if os.path.exists(rutaNew):
+                        if os.path.isfile(source):
+                            filename = os.path.basename(source)
+                            filename_without_extension, file_extension = os.path.splitext(filename)
+                            i = 1
+                            while os.path.exists(os.path.join(rutaTo+f"{filename_without_extension}({i}){file_extension}")):
+                                i += 1
+                            new_filename = f"{filename_without_extension}({i}){file_extension}"
+                            new_filepath = os.path.join(rutaTo+new_filename)
+                            shutil.move(source, new_filepath)
+                        elif os.path.isdir(source):
+                            foldername = os.path.basename(os.path.normpath(source))
+                            i = 1
+                            while os.path.exists(os.path.join(rutaTo+f"{foldername}({i})")):
+                                i += 1
+                            new_foldername = f"{foldername}({i})"
+                            new_folderpath = os.path.join(rutaTo+"\\"+new_foldername)
+                            shutil.move(source, new_folderpath)
+                    else:
+                        shutil.move(source, rutaTo)
+    except Exception as e:
+        print(f"Error while moving: {str(e)}")#return
+    shutil.rmtree(ruta_copia)
+    #return
+    # print("Function: backup")
+    # print("Parameters: No parameters")
 
 
 def backup_with_path(path):
@@ -338,6 +396,20 @@ def backup_with_path(path):
 
 # Metodos auxiliares
 
+@staticmethod
+def downloadFile(folder_id, destination_path):
+    credenciales = login()
+    folder = credenciales.CreateFile({'id': folder_id})
+    folder_title = folder['title']
+    folder_path = os.path.join(destination_path, folder_title)
+    os.makedirs(folder_path, exist_ok=True)
+    file_list = credenciales.ListFile({'q': f"'{folder_id}' in parents and trashed=false"}).GetList()
+    for file in file_list:
+        if file['mimeType'] == 'application/vnd.google-apps.folder':
+            downloadFile(file['id'], folder_path)
+        else:
+            file_path = os.path.join(folder_path, file['title'])
+            file.GetContentFile(file_path)
 
 @staticmethod
 def login():

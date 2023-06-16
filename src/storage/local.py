@@ -1,12 +1,20 @@
 import os
 import shutil
+from pydrive2.auth import GoogleAuth
+from pydrive2.drive import GoogleDrive
 from src.utils.parameters import get_parameters
 from src.utils.parameters import update_parameters
 
 myPath = (
-    r"C:\Users\Edwin Sandoval\Documents\universidad\archivos\Proyecto1\Archivos\local"
+    r"d:\VACAS JUNIO 2023\Archivos\proyectoCopia\Archivos"
+    # r"C:\Users\Edwin Sandoval\Documents\universidad\archivos\Proyecto1\Archivos\local"
 )
 
+pathDownload = (
+    r"d:\VACAS JUNIO 2023\Archivos\proyectoCopia\Archivos\Archivos"
+)
+
+directorio_credenciales = 'credentials_module.json'
 
 def execute(command, parameters):
     function = globals().get(command)
@@ -252,8 +260,8 @@ def transfer(from_path, to, mode):
                     }
             elif os.path.isdir(rutaFrom):
                 for item in os.listdir(rutaFrom):
-                    source = os.path.join(rutaFrom + item)
-                    rutaNew = os.path.join(rutaTo + item)
+                    source = os.path.join(rutaFrom +"\\"+ item)
+                    rutaNew = os.path.join(rutaTo +"\\"+ item)
                     if os.path.exists(rutaNew):
                         if os.path.isfile(source):
                             filename = os.path.basename(source)
@@ -282,8 +290,8 @@ def transfer(from_path, to, mode):
                             ):
                                 i += 1
                             new_foldername = f"{foldername}({i})"
-                            new_folderpath = os.path.join(rutaTo + new_foldername)
-                            shutil.move(rutaFrom, new_folderpath)
+                            new_folderpath = os.path.join(rutaTo +"\\"+ new_foldername)
+                            shutil.move(source, new_folderpath)
                     else:
                         shutil.move(source, rutaTo)
                 return {
@@ -446,8 +454,27 @@ def add(path, body):
 
 
 def backup():
-    print("Function: backup")
-    print("Parameters: No parameters")
+    id_drive = "1eLTdiEeaTRGtNSQbkZ73SZPL_JOYcaen"
+    rutaSubida = myPath
+    folder_name = os.path.basename(rutaSubida)
+    newId = ""
+    try:
+        credenciales = login()
+        folder = credenciales.CreateFile({
+            'title': folder_name,
+            'parents': [{'id': id_drive}],
+            'mimeType': 'application/vnd.google-apps.folder'
+        })
+        folder.Upload()
+        upload_recursive(rutaSubida, folder['id'], credenciales)
+        newId = folder['id']
+    except Exception as e:
+        print(f"Error al subir la carpeta a Google Drive: {str(e)}")#Return
+    moveFolder2(newId,id_drive)
+    deleteFile(newId)
+    #return
+    # print("Function: backup")
+    # print("Parameters: No parameters")
 
 
 def backup_with_path(path):
@@ -466,6 +493,132 @@ def isFile(rutaFrom, rutaTo):
             rutaNew = rutaTo + item
             if not os.path.exists(rutaNew):
                 if os.path.isdir(source):
-                    isFile(source, rutaTo)
+                    rutaNueva = os.path.join(rutaTo + item)
+                    os.makedirs(rutaNueva, exist_ok=True)
+                    isFile(source,rutaNueva)
                 elif os.path.isfile(source):
                     shutil.copy2(source, rutaTo)
+
+@staticmethod
+def upload_recursive(local_folder_path, drive_folder_id, drive):
+    for item in os.listdir(local_folder_path):
+        item_path = os.path.join(local_folder_path, item)
+        if os.path.isfile(item_path):
+            file = drive.CreateFile({
+                'title': item,
+                'parents': [{'id': drive_folder_id}]
+            })
+            file.SetContentFile(item_path)
+            file.Upload()
+        elif os.path.isdir(item_path):
+            subfolder = drive.CreateFile({
+                'title': item,
+                'parents': [{'id': drive_folder_id}],
+                'mimeType': 'application/vnd.google-apps.folder'
+            })
+            subfolder.Upload()
+            upload_recursive(item_path, subfolder['id'], drive)
+
+@staticmethod
+def login():
+    GoogleAuth.DEFAULT_SETTINGS['client_config_file'] = directorio_credenciales
+    gauth = GoogleAuth()
+    gauth.LoadCredentialsFile(directorio_credenciales)
+
+    if gauth.credentials is None:
+        gauth.LocalWebserverAuth(port_numbers=[8092])
+    elif gauth.access_token_expired:
+        gauth.Refresh()
+    else:
+        gauth.Authorize()
+
+    gauth.SaveCredentialsFile(directorio_credenciales)
+    credenciales = GoogleDrive(gauth)
+    return credenciales
+
+@staticmethod
+def moveFile2(id_archivo, id_folder):
+    credenciales = login()
+    archivo = credenciales.CreateFile({'id': id_archivo})
+    propiedades_ocultas = archivo['parents']
+    archivo['parents'] = [{'isRoot': False,
+                           'kind': 'drive#parentReference',
+                           'id': id_folder,
+                           'selfLink': 'https://www.googleapis.com/drive/v2/files/' + id_archivo + '/parents/' + id_folder,
+                           'parentLink': 'https://www.googleapis.com/drive/v2/files/' + id_folder}]
+    
+    file_name = archivo['title']
+    existing_files = credenciales.ListFile({'q': f"'{id_folder}' in parents and title='{file_name}'", 'spaces': 'drive'}).GetList()
+    
+    if existing_files:
+        index = 1
+        while True:##
+            if ".txt" in file_name:
+                file_extension = file_name.split('.')[-1]
+                file_name_without_extension = '.'.join(file_name.split('.')[:-1])
+                new_file_name = f"{file_name_without_extension}({index}).{file_extension}"
+            else:
+                new_file_name = f"{file_name}({index})"
+            existing_files = credenciales.ListFile({'q': f"'{id_folder}' in parents and title='{new_file_name}'", 'spaces': 'drive'}).GetList()
+            if not existing_files:
+                break
+            index += 1
+        archivo['title'] = new_file_name
+    
+    archivo.Upload(param={'supportsTeamDrives': True})
+
+@staticmethod
+def moveFolder2(idFrom, idTo):
+    credenciales = login()
+    folder_content = credenciales.ListFile({'q': f"'{idFrom}' in parents and trashed=false"}).GetList()
+    for item in folder_content:
+        x = item['title']
+        if item['mimeType'] == 'application/vnd.google-apps.folder':
+            ss = searchFile(x,idTo)
+            if ss == "":
+                moveFile2(item['id'], idTo)
+            else:
+                moveFile2(item['id'], idTo)
+        else:
+            x = x+".txt"
+            ss = searchTxt(x,idTo)
+            if ss == "":
+                moveFile2(item['id'], idTo)
+            else:
+                moveFile2(item['id'], idTo)
+
+@staticmethod
+def searchTxt(query, parent_folder_id):
+    name = query
+    resultado = ""
+    credenciales = login()
+    query = f"title = '{name}' and '{parent_folder_id}' in parents"
+    lista_archivos = credenciales.ListFile({'q': query}).GetList()
+    
+    for f in lista_archivos:
+        if f['labels']['trashed'] == 'true':
+            continue
+        if f['title'] == name:
+            resultado = f['id']
+            return resultado
+    return resultado
+
+@staticmethod
+def searchFile(query, parent_folder_id):
+    resultado = ""
+    credenciales = login()
+    query = f"title contains '{query}' and mimeType = 'application/vnd.google-apps.folder' and '{parent_folder_id}' in parents"
+    lista_archivos = credenciales.ListFile({'q': query}).GetList()
+    
+    for f in lista_archivos:
+        if f['labels']['trashed'] == 'true':
+            continue
+        resultado = f['id']
+        return resultado
+    return resultado
+
+@staticmethod
+def deleteFile(id_archivo):
+    credenciales = login()
+    archivo = credenciales.CreateFile({'id': id_archivo})
+    archivo.Delete()
