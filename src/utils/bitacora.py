@@ -11,8 +11,8 @@ def write_log(message):
         date = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
         if encrypt_log:
             encrypt = Encrypt()
-            message = encrypt.encrypt_message(message, key)
-        file.write(f'{date} - {message}\n')
+            message = encrypt.encrypt_message({date} - {message}, key)
+        file.write(f'{message}\n')
 
 def create_folder():
     now = datetime.now()
