@@ -40,6 +40,9 @@ class Copy(customtkinter.CTkFrame):
             response_command = self.copy_file(source_path, destination_path)
             write_log("Output - Comando: {}, response: {}".format("Copy", response_command["msg"]))
             messagebox.showinfo("Copiar", response_command["msg"])
+            #clear entry
+            self.from_entry.delete(0, 'end')
+            self.to_entry.delete(0, 'end')
         else:
             write_log("Error - Faltan parámetros para copiar el archivo")
             messagebox.showerror("Error", "Faltan parámetros para copiar el archivo")

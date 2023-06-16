@@ -34,15 +34,21 @@ class Delete(customtkinter.CTkFrame):
     def delete_button_left_click_event(self, event):
         path = self.path_entry.get()
         name = self.name_entry.get()
-
         if path:
+            result = messagebox.askyesno("Eliminar archivo", "¿Estás seguro de que deseas eliminar el archivo?")
+            if result == False:
+                return
             # Eliminar archivo
             response_command = self.delete_file(path, name)
             #clear entries
+            print(response_command)
             self.path_entry.delete(0, "end")
             self.name_entry.delete(0, "end")
             messagebox.showinfo("Eliminar Archivo", response_command["msg"])
             write_log("Output - Comando: {}, response: {}".format("Delete", response_command["msg"]))
+            # clear entries
+            self.path_entry.delete(0, "end")
+            self.name_entry.delete(0, "end")
         else:
             write_log("Error - Faltan parámetros para eliminar el archivo")
             messagebox.showerror("Eliminar Archivo", "Faltan parámetros para eliminar el archivo")

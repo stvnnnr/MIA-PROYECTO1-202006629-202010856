@@ -61,6 +61,10 @@ class Transfer(customtkinter.CTkFrame):
                 )
             )
             messagebox.showinfo("Transfer", response_command["msg"])
+            #clear entries
+            self.from_entry.delete(0, "end")
+            self.to_entry.delete(0, "end")
+            self.mode_entry.delete(0, "end")
         else:
             write_log("Error - Faltan parámetros para transferir el archivo")
             messagebox.showerror(

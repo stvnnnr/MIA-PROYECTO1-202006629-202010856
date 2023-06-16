@@ -1,7 +1,6 @@
 import customtkinter
 from src.utils.loadUsers import ReadUsers
-import customtkinter as ctk
-import main as view_main
+import src.views.main as view_main
 from src.utils.bitacora import write_log
 from src.utils.parameters import get_parameters
 from src.utils.parameters import update_parameters
@@ -70,8 +69,7 @@ class Login:
             parameters["key"] = "miaproyecto12345"
             update_parameters(parameters)            
             write_log("Output - Inicio de sesión: " + username)
-            ventana_principal = view_main.Main()
-            ventana_principal.run()
+            view_main.Main().run()
         else:
             self.alert.pack(pady=10, padx=10)
 

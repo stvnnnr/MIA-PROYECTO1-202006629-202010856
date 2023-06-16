@@ -1,7 +1,7 @@
 {
-    "encrypt_log": false,
+    "encrypt_log": true,
     "type": "local",
-    "encrypt_read": false,
+    "encrypt_read": true,
     "key": "miaproyecto12345",
     "init_exec": false,
     "count_exec_local": 0,
