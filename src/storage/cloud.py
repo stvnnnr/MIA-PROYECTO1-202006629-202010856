@@ -8,6 +8,14 @@ from src.utils.parameters import update_parameters
 
 directorio_credenciales = "credentials_module.json"
 
+myPath = (
+    r"d:\VACAS JUNIO 2023\Archivos\proyectoCopia\Archivos"
+    # r"C:\Users\Edwin Sandoval\Documents\universidad\archivos\Proyecto1\Archivos\local"
+)
+
+pathDownload = (
+    r"d:\VACAS JUNIO 2023\Archivos\proyectoCopia\Archivos\Archivos"
+)
 
 def execute(command, parameters):
     function = globals().get(command)
@@ -161,60 +169,63 @@ def copy(from_path, to):
 def transfer(from_path, to, mode):
     if mode == "local":
         return { "msg": "Transferencia local", "status": "success" }
-    sou = from_path
-    des = to
-    if '"' in from_path:
-        from_path = from_path.replace('"', "")
-    if "/" in from_path:
-        from_path = from_path.replace("/", "\\")
-    if '"' in to:
-        to = to.replace('"', "")
-    if "/" in to:
-        to = to.replace("/", "\\")
-    from_path = from_path[1:]
-    to = to[1:]
-    to = to[:-1]
-    listPath = to.split("/")
-    currentId = "1eLTdiEeaTRGtNSQbkZ73SZPL_JOYcaen"
-    for x in listPath:
-        aux = searchFile(x, currentId)
-        currentId = aux
-    if currentId == "":
-        return f"ruta -to:'{des}' no existe."
-    idTo = currentId
-    if from_path[-1] == "\\":
-        from_path = from_path[:-1]
-        listPath = from_path.split("/")
+    elif mode == "cloud":
+        sou = from_path
+        des = to
+        if '"' in from_path:
+            from_path = from_path.replace('"', "")
+        if "/" in from_path:
+            from_path = from_path.replace("/", "\\")
+        if '"' in to:
+            to = to.replace('"', "")
+        if "/" in to:
+            to = to.replace("/", "\\")
+        from_path = from_path[1:]
+        to = to[1:]
+        to = to[:-1]
+        listPath = to.split("/")
         currentId = "1eLTdiEeaTRGtNSQbkZ73SZPL_JOYcaen"
-        revision = ""
         for x in listPath:
             aux = searchFile(x, currentId)
             currentId = aux
-            revision = x
         if currentId == "":
-            return {"msg": f"ruta -from:'{sou}' no existe.", "status": "error"}
-        idFrom = currentId
-        moveFolder2(idFrom, idTo)
-        return { "msg": f"Transfer -from:'{sou}' -to: '{des}' movido con exito.", "status": "success" }
-    else:
-        listPath = from_path.split("\\")
-        fileActual = listPath[-1]
-        listPath = listPath[:-1]
-        currentId = "1eLTdiEeaTRGtNSQbkZ73SZPL_JOYcaen"
-        for x in listPath:
-            aux = searchFile(x, currentId)
-            currentId = aux
-        aux = searchTxt(fileActual, currentId)
-        ss = searchTxt(fileActual, idTo)
-        if ss == "":
-            if aux == "":
-                return { "msg": f"ruta -from:'{sou}' no existe.", "status": "error" }
-            idFrom = aux
-            moveFile2(idFrom, idTo)
+            return f"ruta -to:'{des}' no existe."
+        idTo = currentId
+        if from_path[-1] == "\\":
+            from_path = from_path[:-1]
+            listPath = from_path.split("/")
+            currentId = "1eLTdiEeaTRGtNSQbkZ73SZPL_JOYcaen"
+            revision = ""
+            for x in listPath:
+                aux = searchFile(x, currentId)
+                currentId = aux
+                revision = x
+            if currentId == "":
+                return {"msg": f"ruta -from:'{sou}' no existe.", "status": "error"}
+            idFrom = currentId
+            moveFolder2(idFrom, idTo)
             return { "msg": f"Transfer -from:'{sou}' -to: '{des}' movido con exito.", "status": "success" }
         else:
-            moveFile2(idFrom, idTo)
-            return { "msg": f"No se pudo mover -from:'{sou}' -to: '{des}' el archivo ya existe.", "status": "error" }
+            listPath = from_path.split("\\")
+            fileActual = listPath[-1]
+            listPath = listPath[:-1]
+            currentId = "1eLTdiEeaTRGtNSQbkZ73SZPL_JOYcaen"
+            for x in listPath:
+                aux = searchFile(x, currentId)
+                currentId = aux
+            aux = searchTxt(fileActual, currentId)
+            ss = searchTxt(fileActual, idTo)
+            if ss == "":
+                if aux == "":
+                    return { "msg": f"ruta -from:'{sou}' no existe.", "status": "error" }
+                idFrom = aux
+                moveFile2(idFrom, idTo)
+                return { "msg": f"Transfer -from:'{sou}' -to: '{des}' movido con exito.", "status": "success" }
+            else:
+                moveFile2(idFrom, idTo)
+                return { "msg": f"No se pudo mover -from:'{sou}' -to: '{des}' el archivo ya existe.", "status": "error" }
+    else:
+        pass #retornar el error
     # print("Function: transfer")
     # print("Parameters: from_path={}, to={}, mode={}".format(from_path, to, mode))
 
@@ -326,9 +337,57 @@ def add(path, body):
 
 
 def backup():
-    print("Function: backup")
-    print("Parameters: No parameters")
-    return { "msg": "backup realizado con éxito.", "status": "success" }
+    id_drive = "1eLTdiEeaTRGtNSQbkZ73SZPL_JOYcaen"
+    ruta_descarga = myPath
+    ruta_copia = pathDownload
+    downloadFile(id_drive,ruta_descarga)
+    rutaFrom = ruta_copia
+    rutaTo = ruta_descarga
+    try:
+        if os.path.exists(rutaFrom):
+            if os.path.isfile(rutaFrom):
+                filename = os.path.basename(rutaFrom)
+                rutaNew = os.path.join(rutaTo+filename)
+                if os.path.exists(rutaNew):
+                    filename = os.path.basename(rutaFrom)
+                    filename_without_extension, file_extension = os.path.splitext(filename)
+                    i = 1
+                    while os.path.exists(os.path.join(rutaTo+f"{filename_without_extension}({i}){file_extension}")):
+                        i += 1
+                    new_filename = f"{filename_without_extension}({i}){file_extension}"
+                    new_filepath = os.path.join(rutaTo+new_filename)
+                    shutil.move(rutaFrom, new_filepath)
+                else:
+                    shutil.move(rutaFrom, rutaTo)
+            elif os.path.isdir(rutaFrom):
+                for item in os.listdir(rutaFrom):
+                    source = os.path.join(rutaFrom +"\\"+ item)
+                    rutaNew = os.path.join(rutaTo+"\\"+item)
+                    if os.path.exists(rutaNew):
+                        if os.path.isfile(source):
+                            filename = os.path.basename(source)
+                            filename_without_extension, file_extension = os.path.splitext(filename)
+                            i = 1
+                            while os.path.exists(os.path.join(rutaTo+f"{filename_without_extension}({i}){file_extension}")):
+                                i += 1
+                            new_filename = f"{filename_without_extension}({i}){file_extension}"
+                            new_filepath = os.path.join(rutaTo+new_filename)
+                            shutil.move(source, new_filepath)
+                        elif os.path.isdir(source):
+                            foldername = os.path.basename(os.path.normpath(source))
+                            i = 1
+                            while os.path.exists(os.path.join(rutaTo+f"{foldername}({i})")):
+                                i += 1
+                            new_foldername = f"{foldername}({i})"
+                            new_folderpath = os.path.join(rutaTo+"\\"+new_foldername)
+                            shutil.move(source, new_folderpath)
+                    else:
+                        shutil.move(source, rutaTo)
+    except Exception as e:
+        print(f"Error while moving: {str(e)}")#return
+        return { "msg": f"Error while moving: {str(e)}", "status": "error" }
+    shutil.rmtree(ruta_copia)
+    return { "msg": f"Backup realizado con exito.", "status": "success" }
 
 
 def backup_with_path(path):
@@ -338,6 +397,20 @@ def backup_with_path(path):
 
 # Metodos auxiliares
 
+@staticmethod
+def downloadFile(folder_id, destination_path):
+    credenciales = login()
+    folder = credenciales.CreateFile({'id': folder_id})
+    folder_title = folder['title']
+    folder_path = os.path.join(destination_path, folder_title)
+    os.makedirs(folder_path, exist_ok=True)
+    file_list = credenciales.ListFile({'q': f"'{folder_id}' in parents and trashed=false"}).GetList()
+    for file in file_list:
+        if file['mimeType'] == 'application/vnd.google-apps.folder':
+            downloadFile(file['id'], folder_path)
+        else:
+            file_path = os.path.join(folder_path, file['title'])
+            file.GetContentFile(file_path)
 
 @staticmethod
 def login():
@@ -527,15 +600,18 @@ def moveFile2(id_archivo, id_folder):
         }
     ]
     file_name = archivo["title"]
-    file_extension = file_name.split(".")[-1]
-    file_name_without_extension = ".".join(file_name.split(".")[:-1])
     existing_files = credenciales.ListFile(
         {"q": f"'{id_folder}' in parents and title='{file_name}'", "spaces": "drive"}
     ).GetList()
     if existing_files:
         index = 1
         while True:
-            new_file_name = f"{file_name_without_extension}({index}).{file_extension}"
+            if ".txt" in file_name:
+                file_extension = file_name.split('.')[-1]
+                file_name_without_extension = '.'.join(file_name.split('.')[:-1])
+                new_file_name = f"{file_name_without_extension}({index}).{file_extension}"
+            else:
+                new_file_name = f"{file_name}({index})"
             existing_files = credenciales.ListFile(
                 {
                     "q": f"'{id_folder}' in parents and title='{new_file_name}'",
