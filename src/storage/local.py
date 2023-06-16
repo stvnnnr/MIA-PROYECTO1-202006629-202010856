@@ -210,108 +210,111 @@ def transfer(from_path, to, mode):
             ),
             "status": "error",
         }
-    sou = from_path
-    des = to
-    ruta_actual = myPath
-    if '"' in from_path:
-        from_path = from_path.replace('"', "")
-    if "/" in from_path:
-        from_path = from_path.replace("/", "\\")
-    if '"' in to:
-        to = to.replace('"', "")
-    if "/" in to:
-        to = to.replace("/", "\\")
-    rutaFrom = os.path.join(ruta_actual + from_path)
-    rutaTo = os.path.join(ruta_actual + to)
-    try:
-        if os.path.exists(rutaFrom):
-            if os.path.isfile(rutaFrom):
-                filename = os.path.basename(rutaFrom)
-                rutaNew = os.path.join(rutaTo + filename)
-                if os.path.exists(rutaNew):
+    elif mode == "local":
+        sou = from_path
+        des = to
+        ruta_actual = myPath
+        if '"' in from_path:
+            from_path = from_path.replace('"', "")
+        if "/" in from_path:
+            from_path = from_path.replace("/", "\\")
+        if '"' in to:
+            to = to.replace('"', "")
+        if "/" in to:
+            to = to.replace("/", "\\")
+        rutaFrom = os.path.join(ruta_actual + from_path)
+        rutaTo = os.path.join(ruta_actual + to)
+        try:
+            if os.path.exists(rutaFrom):
+                if os.path.isfile(rutaFrom):
                     filename = os.path.basename(rutaFrom)
-                    filename_without_extension, file_extension = os.path.splitext(
-                        filename
-                    )
-                    i = 1
-                    while os.path.exists(
-                        os.path.join(
-                            rutaTo
-                            + f"{filename_without_extension}({i}){file_extension}"
-                        )
-                    ):
-                        i += 1
-                    new_filename = f"{filename_without_extension}({i}){file_extension}"
-                    new_filepath = os.path.join(rutaTo + new_filename)
-                    shutil.move(rutaFrom, new_filepath)
-                    return {
-                        "msg": "Transfer -from:'{}' -to: '{}' -mode: '{}' movido con exito.".format(
-                            sou, des, mode
-                        ),
-                        "status": "success",
-                    }
-                else:
-                    shutil.move(rutaFrom, rutaTo)
-                    return {
-                        "msg": "Transfer -from:'{}' -to: '{}' -mode: '{}' movido con exito.".format(
-                            sou, des, mode
-                        ),
-                        "status": "success",
-                    }
-            elif os.path.isdir(rutaFrom):
-                for item in os.listdir(rutaFrom):
-                    source = os.path.join(rutaFrom +"\\"+ item)
-                    rutaNew = os.path.join(rutaTo +"\\"+ item)
+                    rutaNew = os.path.join(rutaTo + filename)
                     if os.path.exists(rutaNew):
-                        if os.path.isfile(source):
-                            filename = os.path.basename(source)
-                            (
-                                filename_without_extension,
-                                file_extension,
-                            ) = os.path.splitext(filename)
-                            i = 1
-                            while os.path.exists(
-                                os.path.join(
-                                    rutaTo
-                                    + f"{filename_without_extension}({i}){file_extension}"
-                                )
-                            ):
-                                i += 1
-                            new_filename = (
-                                f"{filename_without_extension}({i}){file_extension}"
+                        filename = os.path.basename(rutaFrom)
+                        filename_without_extension, file_extension = os.path.splitext(
+                            filename
+                        )
+                        i = 1
+                        while os.path.exists(
+                            os.path.join(
+                                rutaTo
+                                + f"{filename_without_extension}({i}){file_extension}"
                             )
-                            new_filepath = os.path.join(rutaTo + new_filename)
-                            shutil.move(source, new_filepath)
-                        elif os.path.isdir(source):
-                            foldername = os.path.basename(os.path.normpath(source))
-                            i = 1
-                            while os.path.exists(
-                                os.path.join(rutaTo + f"{foldername}({i})")
-                            ):
-                                i += 1
-                            new_foldername = f"{foldername}({i})"
-                            new_folderpath = os.path.join(rutaTo +"\\"+ new_foldername)
-                            shutil.move(source, new_folderpath)
+                        ):
+                            i += 1
+                        new_filename = f"{filename_without_extension}({i}){file_extension}"
+                        new_filepath = os.path.join(rutaTo + new_filename)
+                        shutil.move(rutaFrom, new_filepath)
+                        return {
+                            "msg": "Transfer -from:'{}' -to: '{}' -mode: '{}' movido con exito.".format(
+                                sou, des, mode
+                            ),
+                            "status": "success",
+                        }
                     else:
-                        shutil.move(source, rutaTo)
+                        shutil.move(rutaFrom, rutaTo)
+                        return {
+                            "msg": "Transfer -from:'{}' -to: '{}' -mode: '{}' movido con exito.".format(
+                                sou, des, mode
+                            ),
+                            "status": "success",
+                        }
+                elif os.path.isdir(rutaFrom):
+                    for item in os.listdir(rutaFrom):
+                        source = os.path.join(rutaFrom +"\\"+ item)
+                        rutaNew = os.path.join(rutaTo +"\\"+ item)
+                        if os.path.exists(rutaNew):
+                            if os.path.isfile(source):
+                                filename = os.path.basename(source)
+                                (
+                                    filename_without_extension,
+                                    file_extension,
+                                ) = os.path.splitext(filename)
+                                i = 1
+                                while os.path.exists(
+                                    os.path.join(
+                                        rutaTo
+                                        + f"{filename_without_extension}({i}){file_extension}"
+                                    )
+                                ):
+                                    i += 1
+                                new_filename = (
+                                    f"{filename_without_extension}({i}){file_extension}"
+                                )
+                                new_filepath = os.path.join(rutaTo + new_filename)
+                                shutil.move(source, new_filepath)
+                            elif os.path.isdir(source):
+                                foldername = os.path.basename(os.path.normpath(source))
+                                i = 1
+                                while os.path.exists(
+                                    os.path.join(rutaTo + f"{foldername}({i})")
+                                ):
+                                    i += 1
+                                new_foldername = f"{foldername}({i})"
+                                new_folderpath = os.path.join(rutaTo +"\\"+ new_foldername)
+                                shutil.move(source, new_folderpath)
+                        else:
+                            shutil.move(source, rutaTo)
+                    return {
+                        "msg": "Transfer -from:'{}' -to: '{}' -mode: '{}' movido con exito.".format(
+                            sou, des, mode
+                        ),
+                        "status": "success",
+                    }
+            else:
                 return {
-                    "msg": "Transfer -from:'{}' -to: '{}' -mode: '{}' movido con exito.".format(
-                        sou, des, mode
-                    ),
-                    "status": "success",
+                    "msg": "No se encontró el archivo en la ruta {}".format(from_path),
+                    "status": "error",
                 }
-        else:
+        except Exception as e:
             return {
-                "msg": "No se encontró el archivo en la ruta {}".format(from_path),
+                "msg": "Transfer -from:'{}' -to: '{}' -mode: '{}' no se pudo mover.".format(
+                    sou, des, mode
+                ),
                 "status": "error",
             }
-    except Exception as e:
-        return {
-            "msg": "Transfer -from:'{}' -to: '{}' -mode: '{}' no se pudo mover.".format(
-                sou, des, mode
-            ),
-            "status": "error",
-        }
+    else:
+        pass#aca va return error
     # print("Function: transfer")
     # print("Parameters: from_path={}, to={}, mode={}".format(from_path, to, mode))
 
