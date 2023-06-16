@@ -1,9 +1,9 @@
 {
     "encrypt_log": true,
-    "type": "local",
+    "type": "cloud",
     "encrypt_read": true,
     "key": "miaproyecto12345",
-    "init_exec": false,
+    "init_exec": true,
     "count_exec_local": 0,
     "count_exec_nube": 0
 }

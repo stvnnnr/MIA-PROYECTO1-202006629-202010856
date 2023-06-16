@@ -219,7 +219,8 @@ def transfer(from_path, to, mode):
     # print("Parameters: from_path={}, to={}, mode={}".format(from_path, to, mode))
 
 
-def rename(path, new_name):
+def rename(path, name):
+    new_name = name
     sou = path
     des = new_name
     if '"' in path:
@@ -322,13 +323,12 @@ def add(path, body):
             return { "msg": f"Add -path:'{sou}' con '{body}' agregado con exito.", "status": "success" }
     else:
         return { "msg": f"ruta -path:'{sou}' no existe.", "status": "error" }
-    # print("Function: add")
-    # print("Parameters: path={}, body={}".format(path, body))
 
 
 def backup():
     print("Function: backup")
     print("Parameters: No parameters")
+    return { "msg": "backup realizado con éxito.", "status": "success" }
 
 
 def backup_with_path(path):

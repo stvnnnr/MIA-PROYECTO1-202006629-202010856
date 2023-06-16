@@ -53,7 +53,6 @@ class Main(customtkinter.CTk):
             'rename',
             'modify',
             'add',
-            'exec',
             'configure',
             ],
             command=self.change_operation_event)

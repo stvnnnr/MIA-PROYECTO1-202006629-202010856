@@ -10,6 +10,7 @@ myPath = (
 
 def execute(command, parameters):
     function = globals().get(command)
+    print("function", command, function)
     response = function(**parameters)
 
     parameters = get_parameters()
@@ -20,8 +21,8 @@ def execute(command, parameters):
 
 
 def configure(type, encrypt_log, encrypt_read, key=None):
-    bool_encrypt_log = bool(encrypt_log.lower() == "true")
-    bool_encrypt_read = bool(encrypt_read.lower() == "true")
+    bool_encrypt_log = bool(encrypt_log.lower().replace(" ", "") == "true")
+    bool_encrypt_read = bool(encrypt_read.lower().replace(" ", "") == "true")
     parameters = get_parameters()
     parameters["encrypt_log"] = bool_encrypt_log
     parameters["encrypt_read"] = bool_encrypt_read
@@ -308,7 +309,8 @@ def transfer(from_path, to, mode):
     # print("Parameters: from_path={}, to={}, mode={}".format(from_path, to, mode))
 
 
-def rename(path, new_name):
+def rename(path, name):
+    new_name = name
     nameOriginal = new_name
     if '"' in new_name:
         new_name = new_name.replace('"', "")
@@ -448,6 +450,8 @@ def add(path, body):
 def backup():
     print("Function: backup")
     print("Parameters: No parameters")
+
+    return { "msg": "backup realizado con éxito.", "status": "success" }
 
 
 def backup_with_path(path):

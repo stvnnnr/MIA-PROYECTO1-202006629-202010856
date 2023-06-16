@@ -36,8 +36,8 @@ class Exec(customtkinter.CTkFrame):
 
     def execute_command(self, file_path):
         if parameters.get_parameters()["type"] == "cloud":
-            response_command = storage_cloud.execute(file_path)
+            response_command = storage_cloud.exec(file_path)
         elif parameters.get_parameters()["type"] == "local":
-            response_command = storage_local.execute(file_path)
+            response_command = storage_local.exec(file_path)
 
         return response_command
