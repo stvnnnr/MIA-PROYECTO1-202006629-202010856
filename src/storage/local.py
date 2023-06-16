@@ -3,21 +3,25 @@ import shutil
 from src.utils.parameters import get_parameters
 from src.utils.parameters import update_parameters
 
-myPath = r"d:\VACAS JUNIO 2023\Archivos\proyectoCopia\src"
+myPath = (
+    r"C:\Users\Edwin Sandoval\Documents\universidad\archivos\Proyecto1\Archivos\local"
+)
+
 
 def execute(command, parameters):
     function = globals().get(command)
     response = function(**parameters)
-    
+
     parameters = get_parameters()
     if parameters["init_exec"]:
         parameters["count_exec_local"] = parameters["count_exec_local"] + 1
     update_parameters(parameters)
     return response
 
+
 def configure(type, encrypt_log, encrypt_read, key=None):
-    bool_encrypt_log = bool(encrypt_log.lower() == 'true')
-    bool_encrypt_read = bool(encrypt_read.lower() == 'true')
+    bool_encrypt_log = bool(encrypt_log.lower() == "true")
+    bool_encrypt_read = bool(encrypt_read.lower() == "true")
     parameters = get_parameters()
     parameters["encrypt_log"] = bool_encrypt_log
     parameters["encrypt_read"] = bool_encrypt_read
@@ -28,15 +32,21 @@ def configure(type, encrypt_log, encrypt_read, key=None):
 
     update_parameters(parameters)
 
-    return "Configuración exitosa: encrypt_log={}, encrypt_read={}, type={}, key={}".format(bool_encrypt_log, bool_encrypt_read, type, key)       
+    return {
+        "msg": "Configuración exitosa: encrypt_log={}, encrypt_read={}, type={}, key={}".format(
+            bool_encrypt_log, bool_encrypt_read, type, key
+        ),
+        "status": "success",
+    }
+
 
 def create(name, path, body):
     nameEntrada = name
-    if "\"" in name:
-        name = name.replace("\"", "")
+    if '"' in name:
+        name = name.replace('"', "")
     pathEntrada = path
-    if "\"" in pathEntrada:
-        pathEntrada = pathEntrada.replace("\"", "")
+    if '"' in pathEntrada:
+        pathEntrada = pathEntrada.replace('"', "")
     if "/" in pathEntrada:
         pathEntrada = pathEntrada.replace("/", "\\")
     ruta_actual = myPath
@@ -45,61 +55,101 @@ def create(name, path, body):
         if not os.path.exists(ruta_nueva_carpeta):
             os.makedirs(ruta_nueva_carpeta, exist_ok=True)
     except:
-        return (f"No se pudo crear la carpeta '{path}'")
+        return {
+            "msg": "No se pudo crear el archivo: name={}, path={}, body={}".format(
+                name, path, body
+            ),
+            "status": "error",
+        }
     ruta_nueva_carpeta = ruta_nueva_carpeta + name
     try:
         if not os.path.exists(ruta_nueva_carpeta):
             with open(ruta_nueva_carpeta, "w") as archivo:
                 archivo.write(body)
                 archivo.close()
-            return(f"Create -name:'{nameEntrada}' creado con exito en -path:'{path}'.")
+            return {
+                "msg": "Archivo creado exitosamente: name={}, path={}, body={}".format(
+                    name, path, body
+                ),
+                "status": "success",
+            }
         else:
-            return (f"No se pudo crear el archivo'{nameEntrada}' porque ya existe")
+            return {
+                "msg": "El archivo ya existe: name={}, path={}, body={}".format(
+                    name, path, body
+                ),
+                "status": "error",
+            }
     except IOError:
-        return (f"No se pudo crear el archivo'{nameEntrada}'")
+        return {
+            "msg": "No se pudo crear el archivo: name={}, path={}, body={}".format(
+                name, path, body
+            ),
+            "status": "error",
+        }
     # print("Parameters: name={}, path={}, body={}".format(name, path, body))
     # return "Archivo creado exitosamente: name={}, path={}, body={}".format(name, path, body)
 
+
 def delete(path, name=None):
     pathEntrada = path
-    if "\"" in path:
-        path = path.replace("\"","")
+    if '"' in path:
+        path = path.replace('"', "")
     ruta_actual = myPath
-    ruta_nueva_carpeta = os.path.join(ruta_actual+path.replace("/", "\\"))
+    ruta_nueva_carpeta = os.path.join(ruta_actual + path.replace("/", "\\"))
     if name:
         ruta_completa = os.path.join(ruta_nueva_carpeta, name)
         if os.path.exists(ruta_completa):
             if os.path.isfile(ruta_completa):
-                #Hacer pregunta si está seguro
+                # Hacer pregunta si está seguro
                 os.remove(ruta_completa)
-                return(f"Delete -name:'{name}'.txt eliminado con exito.")
+                return {
+                    "msg": "Delete -name:'{}' eliminado con exito.".format(name),
+                    "status": "success",
+                }
             else:
-                return(f"{name}.txt en la ruta {pathEntrada} no es un archivo válido.")
+                return {
+                    "msg": "{} no es un archivo válido.".format(name),
+                    "status": "error",
+                }
         else:
-            return(f"No se encontró el archivo {name}.txt en la ruta {pathEntrada}.")
+            return {
+                "msg": "No se encontró el archivo en la ruta {}".format(path),
+                "status": "error",
+            }
     else:
         if os.path.exists(ruta_nueva_carpeta):
             if os.path.isdir(ruta_nueva_carpeta):
-                #Hacer pregunta si está seguro
+                # Hacer pregunta si está seguro
                 shutil.rmtree(ruta_nueva_carpeta)
-                return(f"Delete -name:'{pathEntrada}' eliminado con exito.")
+                return {
+                    "msg": "Delete -path:'{}' eliminado con exito.".format(path),
+                    "status": "success",
+                }
             else:
-                return(f"{pathEntrada} no es una carpeta válida.")
+                return {
+                    "msg": "{} no es una carpeta válida.".format(path),
+                    "status": "error",
+                }
         else:
-            return(f"No se encontró la carpeta en la ruta {pathEntrada}.")
+            return {
+                "msg": "No se encontró la carpeta {}".format(path),
+                "status": "error",
+            }
     # print("Function: delete")
     # print("Parameters: path={}, name={}".format(path, name))
+
 
 def copy(from_path, to):
     sou = from_path
     des = to
     ruta_actual = myPath
-    if "\"" in from_path:
-        from_path = from_path.replace("\"", "")
+    if '"' in from_path:
+        from_path = from_path.replace('"', "")
     if "/" in from_path:
         from_path = from_path.replace("/", "\\")
-    if "\"" in to:
-        to = to.replace("\"", "")
+    if '"' in to:
+        to = to.replace('"', "")
     if "/" in to:
         to = to.replace("/", "\\")
     rutaFrom = os.path.join(ruta_actual + from_path)
@@ -108,34 +158,59 @@ def copy(from_path, to):
         if os.path.exists(rutaFrom):
             if os.path.isfile(rutaFrom):
                 filename = os.path.basename(rutaFrom)
-                rutaNew = rutaTo+filename
+                rutaNew = rutaTo + filename
                 if os.path.exists(rutaNew):
-                    return(f"El archivo '{sou}' ya existe en la ruta '{des}'.")
+                    return {
+                        "msg": "El archivo ya existe en la ruta {}".format(to),
+                        "status": "error",
+                    }
                 else:
                     shutil.copy2(rutaFrom, rutaTo)
-                    return(f"Copy -from:'{sou}' -to: '{des}' copiado con éxito.")
+                    return {
+                        "msg": "Copy -from:'{}' -to: '{}' copiado con exito.".format(
+                            sou, des
+                        ),
+                        "status": "success",
+                    }
             elif os.path.isdir(rutaFrom):
-                isFile(rutaFrom,rutaTo)
-                return(f"Copy -from:'{sou}' -to: '{des}' copiado lo posible.")
+                isFile(rutaFrom, rutaTo)
+                return {
+                    "msg": "Copy -from:'{}' -to: '{}' copiado con exito.".format(
+                        sou, des
+                    ),
+                    "status": "success",
+                }
         else:
-            return(f"La ruta'{sou}' no existe.")
+            return {
+                "msg": "No se encontró el archivo en la ruta {}".format(from_path),
+                "status": "error",
+            }
     except Exception as e:
-        return(f"No se pudo copiar -from:'{sou}' -to: '{des}'")
+        return {
+            "msg": "Copy -from:'{}' -to: '{}' no se pudo copiar.".format(sou, des),
+            "status": "error",
+        }
     # print("Function: copy")
     # print("Parameters: from_path={}, to={}".format(from_path, to))
 
+
 def transfer(from_path, to, mode):
     if mode == "cloud":
-        return(f"No se pudo mover porque no es el ambito esperado")
+        return {
+            "msg": "Transfer -from:'{}' -to: '{}' -mode: '{}' no se pudo copiar.".format(
+                from_path, to, mode
+            ),
+            "status": "error",
+        }
     sou = from_path
     des = to
     ruta_actual = myPath
-    if "\"" in from_path:
-        from_path = from_path.replace("\"", "")
+    if '"' in from_path:
+        from_path = from_path.replace('"', "")
     if "/" in from_path:
         from_path = from_path.replace("/", "\\")
-    if "\"" in to:
-        to = to.replace("\"", "")
+    if '"' in to:
+        to = to.replace('"', "")
     if "/" in to:
         to = to.replace("/", "\\")
     rutaFrom = os.path.join(ruta_actual + from_path)
@@ -144,59 +219,102 @@ def transfer(from_path, to, mode):
         if os.path.exists(rutaFrom):
             if os.path.isfile(rutaFrom):
                 filename = os.path.basename(rutaFrom)
-                rutaNew = os.path.join(rutaTo+filename)
+                rutaNew = os.path.join(rutaTo + filename)
                 if os.path.exists(rutaNew):
                     filename = os.path.basename(rutaFrom)
-                    filename_without_extension, file_extension = os.path.splitext(filename)
+                    filename_without_extension, file_extension = os.path.splitext(
+                        filename
+                    )
                     i = 1
-                    while os.path.exists(os.path.join(rutaTo+f"{filename_without_extension}({i}){file_extension}")):
+                    while os.path.exists(
+                        os.path.join(
+                            rutaTo
+                            + f"{filename_without_extension}({i}){file_extension}"
+                        )
+                    ):
                         i += 1
                     new_filename = f"{filename_without_extension}({i}){file_extension}"
-                    new_filepath = os.path.join(rutaTo+new_filename)
+                    new_filepath = os.path.join(rutaTo + new_filename)
                     shutil.move(rutaFrom, new_filepath)
-                    return(f"Move -from:'{sou}' -to: '{des}' movido con éxito.")
+                    return {
+                        "msg": "Transfer -from:'{}' -to: '{}' -mode: '{}' movido con exito.".format(
+                            sou, des, mode
+                        ),
+                        "status": "success",
+                    }
                 else:
                     shutil.move(rutaFrom, rutaTo)
-                    return(f"Move -from:'{sou}' -to: '{des}' movido con éxito.")
+                    return {
+                        "msg": "Transfer -from:'{}' -to: '{}' -mode: '{}' movido con exito.".format(
+                            sou, des, mode
+                        ),
+                        "status": "success",
+                    }
             elif os.path.isdir(rutaFrom):
                 for item in os.listdir(rutaFrom):
                     source = os.path.join(rutaFrom + item)
-                    rutaNew = os.path.join(rutaTo+item)
+                    rutaNew = os.path.join(rutaTo + item)
                     if os.path.exists(rutaNew):
                         if os.path.isfile(source):
                             filename = os.path.basename(source)
-                            filename_without_extension, file_extension = os.path.splitext(filename)
+                            (
+                                filename_without_extension,
+                                file_extension,
+                            ) = os.path.splitext(filename)
                             i = 1
-                            while os.path.exists(os.path.join(rutaTo+f"{filename_without_extension}({i}){file_extension}")):
+                            while os.path.exists(
+                                os.path.join(
+                                    rutaTo
+                                    + f"{filename_without_extension}({i}){file_extension}"
+                                )
+                            ):
                                 i += 1
-                            new_filename = f"{filename_without_extension}({i}){file_extension}"
-                            new_filepath = os.path.join(rutaTo+new_filename)
+                            new_filename = (
+                                f"{filename_without_extension}({i}){file_extension}"
+                            )
+                            new_filepath = os.path.join(rutaTo + new_filename)
                             shutil.move(source, new_filepath)
                         elif os.path.isdir(source):
                             foldername = os.path.basename(os.path.normpath(source))
                             i = 1
-                            while os.path.exists(os.path.join(rutaTo+f"{foldername}({i})")):
+                            while os.path.exists(
+                                os.path.join(rutaTo + f"{foldername}({i})")
+                            ):
                                 i += 1
                             new_foldername = f"{foldername}({i})"
-                            new_folderpath = os.path.join(rutaTo+new_foldername)
+                            new_folderpath = os.path.join(rutaTo + new_foldername)
                             shutil.move(rutaFrom, new_folderpath)
                     else:
                         shutil.move(source, rutaTo)
-                return(f"Move -from:'{sou}' -to: '{des}' movido con éxito.")
+                return {
+                    "msg": "Transfer -from:'{}' -to: '{}' -mode: '{}' movido con exito.".format(
+                        sou, des, mode
+                    ),
+                    "status": "success",
+                }
         else:
-            return(f"ruta -from:'{sou}' no existe.")
+            return {
+                "msg": "No se encontró el archivo en la ruta {}".format(from_path),
+                "status": "error",
+            }
     except Exception as e:
-        return(f"No se pudo mover -from:'{sou}' -to: '{des}'")
+        return {
+            "msg": "Transfer -from:'{}' -to: '{}' -mode: '{}' no se pudo mover.".format(
+                sou, des, mode
+            ),
+            "status": "error",
+        }
     # print("Function: transfer")
     # print("Parameters: from_path={}, to={}, mode={}".format(from_path, to, mode))
 
+
 def rename(path, new_name):
     nameOriginal = new_name
-    if "\"" in new_name:
-        new_name = new_name.replace("\"", "")
+    if '"' in new_name:
+        new_name = new_name.replace('"', "")
     pathEntrada = path
-    if "\"" in pathEntrada:
-        pathEntrada = pathEntrada.replace("\"", "")
+    if '"' in pathEntrada:
+        pathEntrada = pathEntrada.replace('"', "")
     if "/" in pathEntrada:
         pathEntrada = pathEntrada.replace("/", "\\")
     ruta_actual = myPath
@@ -206,52 +324,55 @@ def rename(path, new_name):
             ruta_nueva_carpeta = ruta_nueva_carpeta[:-1]
             new_name = "\\" + new_name
             parent_dir = os.path.dirname(ruta_nueva_carpeta)
-            new_path = os.path.join(parent_dir+new_name)
+            new_path = os.path.join(parent_dir + new_name)
             try:
                 os.rename(ruta_nueva_carpeta, new_path)
-                return(f"rename -path:'{pathEntrada}' -name: '{nameOriginal}' realizado con éxito.")
+                return {
+                    "msg": "rename -path:'{}' -name: '{}' realizado con éxito.".format(
+                        pathEntrada, nameOriginal
+                    ),
+                    "status": "success",
+                }
             except OSError as e:
-                return(f"no se pudo renombrar -path:'{pathEntrada}' -name: '{nameOriginal}'")
+                return {
+                    "msg": "no se pudo renombrar -path:'{}' -name: '{}'".format(
+                        pathEntrada, nameOriginal
+                    ),
+                    "status": "error",
+                }
         elif os.path.isfile(ruta_nueva_carpeta):
             try:
                 parent_dir = os.path.dirname(ruta_nueva_carpeta)
-                new_path = os.path.join(parent_dir+"\\"+new_name)
+                new_path = os.path.join(parent_dir + "\\" + new_name)
                 os.rename(ruta_nueva_carpeta, new_path)
-                return(f"rename -path:'{pathEntrada}' -name: '{nameOriginal}' realizado con éxito.")
+                return {
+                    "msg": "rename -path:'{}' -name: '{}' realizado con éxito.".format(
+                        pathEntrada, nameOriginal
+                    ),
+                    "status": "success",
+                }
             except OSError as e:
-                return(f"no se pudo renombrar -path:'{pathEntrada}' -name: '{nameOriginal}'")
+                return {
+                    "msg": "no se pudo renombrar -path:'{}' -name: '{}'".format(
+                        pathEntrada, nameOriginal
+                    ),
+                    "status": "error",
+                }
     else:
-        return(f"ruta -path:'{pathEntrada}' no existe")
+        return {
+            "msg": "no se pudo renombrar -path:'{}' -name: '{}'".format(
+                pathEntrada, nameOriginal
+            ),
+            "status": "error",
+        }
     # print("Function: rename")
     # print("Parameters: path={}, new_name={}".format(path, new_name))
 
+
 def modify(path, body):
     pathEntrada = path
-    if "\"" in path:
-        path = path.replace("\"", "")
-    if "/" in path:
-        path = path.replace("/", "\\")
-    ruta_actual = myPath
-    ruta_archivo = os.path.join(ruta_actual+path)
-    if os.path.exists(ruta_archivo):
-        if os.path.isfile(ruta_archivo):
-            try:
-                with open(ruta_archivo, 'w') as file:
-                    file.write(body)
-                return(f"modify -path:'{pathEntrada}' realizado con éxito.")
-            except OSError as e:
-                return(f"no se pudo modificar -path:'{pathEntrada}'")
-        else:
-            return(f"no se pudo modificar -path:'{pathEntrada}' porque no corresponde a ningun archivo valido")
-    else:
-        return(f"no se pudo modificar -path:'{pathEntrada}' porque no existe")
-    # print("Function: modify")
-    # print("Parameters: path={}, body={}".format(path, body))
-
-def add(path, body):
-    pathEntrada = path
-    if "\"" in path:
-        path = path.replace("\"", "")
+    if '"' in path:
+        path = path.replace('"', "")
     if "/" in path:
         path = path.replace("/", "\\")
     ruta_actual = myPath
@@ -259,27 +380,82 @@ def add(path, body):
     if os.path.exists(ruta_archivo):
         if os.path.isfile(ruta_archivo):
             try:
-                with open(ruta_archivo, 'a') as file:
+                with open(ruta_archivo, "w") as file:
                     file.write(body)
-                return(f"add -path:'{pathEntrada}' realizado con éxito.")
+                return {
+                    "msg": "modify -path:'{}' realizado con éxito.".format(pathEntrada),
+                    "status": "success",
+                }
             except OSError as e:
-                return(f"no se pudo añadir el contenido a -path:'{pathEntrada}'")
+                return {
+                    "msg": "no se pudo modificar -path:'{}'".format(pathEntrada),
+                    "status": "error",
+                }
         else:
-            return(f"no se pudo añadir contenido a -path:'{pathEntrada}' porque no corresponde a ningun archivo valido")
+            return {
+                "msg": "no se pudo modificar -path:'{}' porque no es un archivo".format(
+                    pathEntrada
+                ),
+                "status": "error",
+            }
     else:
-        return(f"no se pudo añadir contenido a -path:'{pathEntrada}' porque no existe")
-    # print("Function: add")
+        return {
+            "msg": "no se pudo modificar -path:'{}'".format(pathEntrada),
+            "status": "error",
+        }
+    # print("Function: modify")
     # print("Parameters: path={}, body={}".format(path, body))
+
+
+def add(path, body):
+    pathEntrada = path
+    if '"' in path:
+        path = path.replace('"', "")
+    if "/" in path:
+        path = path.replace("/", "\\")
+    ruta_actual = myPath
+    ruta_archivo = os.path.join(ruta_actual + path)
+    if os.path.exists(ruta_archivo):
+        if os.path.isfile(ruta_archivo):
+            try:
+                with open(ruta_archivo, "a") as file:
+                    file.write(body)
+                return {
+                    "msg": "add -path:'{}' realizado con éxito.".format(pathEntrada),
+                    "status": "success",
+                }
+            except OSError as e:
+                return {
+                    "msg": "no se pudo añadir contenido a -path:'{}'".format(
+                        pathEntrada
+                    ),
+                    "status": "error",
+                }
+        else:
+            return {
+                "msg": "no se pudo añadir contenido a -path:'{}' porque no es un archivo".format(
+                    pathEntrada
+                ),
+                "status": "error",
+            }
+    else:
+        return {
+            "msg": "no se pudo añadir contenido a -path:'{}'".format(pathEntrada),
+            "status": "error",
+        }
+
 
 def backup():
     print("Function: backup")
     print("Parameters: No parameters")
 
+
 def backup_with_path(path):
     print("Function: backup_with_path")
     print("Parameters: path={}".format(path))
 
-#metodo auxiliar
+
+# metodo auxiliar
 def isFile(rutaFrom, rutaTo):
     if len(os.listdir(rutaFrom)) != 0:
         for item in os.listdir(rutaFrom):
@@ -287,9 +463,9 @@ def isFile(rutaFrom, rutaTo):
                 source = os.path.join(rutaFrom + item)
             else:
                 source = os.path.join(rutaFrom + item + "\\")
-            rutaNew = rutaTo+item
+            rutaNew = rutaTo + item
             if not os.path.exists(rutaNew):
                 if os.path.isdir(source):
-                    isFile(source,rutaTo)
+                    isFile(source, rutaTo)
                 elif os.path.isfile(source):
                     shutil.copy2(source, rutaTo)

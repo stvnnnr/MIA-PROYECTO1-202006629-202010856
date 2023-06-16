@@ -3,6 +3,7 @@ import src.storage.cloud as storage_cloud
 import src.storage.local as storage_local
 from src.utils.bitacora import write_log
 import src.utils.parameters as parameters
+from tkinter import messagebox
 
 class Rename(customtkinter.CTkFrame):
 
@@ -12,7 +13,7 @@ class Rename(customtkinter.CTkFrame):
         self.grid_rowconfigure((0, 1, 2, 3, 4, 5, 6, 7, 8, 9), weight=1)
 
         self.logo_label = customtkinter.CTkLabel(self, text="Renombrar Archivo", font=customtkinter.CTkFont(size=20, weight="bold"))
-        self.logo_label.grid(row=0, column=0, padx=20, pady=(20, 10), columnspan=5)
+        self.logo_label.grid(row=0, column=0, padx=20, pady=(20, 10))
 
         self.path_label = customtkinter.CTkLabel(self, text="Ruta del archivo", anchor="w")
         self.path_label.grid(row=1, column=1, padx=20, pady=(10, 0), sticky="ew")
@@ -36,9 +37,11 @@ class Rename(customtkinter.CTkFrame):
         if file_path and new_name:
             # Renombrar archivo
             response_command = self.rename_file(file_path, new_name)
-            write_log("Output - Comando: {}, response: {}".format("Rename", response_command))
+            write_log("Output - Comando: {}, response: {}".format("Rename", response_command["msg"]))
+            messagebox.showinfo("Output", response_command["msg"])
         else:
             write_log("Error - Faltan parámetros para renombrar el archivo")
+            messagebox.showerror("Error", "Faltan parámetros para renombrar el archivo")
 
     def rename_file(self, file_path, new_name):
         if parameters.get_parameters()["type"] == "cloud":

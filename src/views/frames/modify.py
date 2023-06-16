@@ -3,6 +3,7 @@ import src.storage.cloud as storage_cloud
 import src.storage.local as storage_local
 from src.utils.bitacora import write_log
 import src.utils.parameters as parameters
+from tkinter import messagebox
 
 class Modify(customtkinter.CTkFrame):
 
@@ -12,7 +13,7 @@ class Modify(customtkinter.CTkFrame):
         self.grid_rowconfigure((0, 1, 2, 3, 4, 5, 6, 7, 8, 9), weight=1)
 
         self.logo_label = customtkinter.CTkLabel(self, text="Modificar Archivo", font=customtkinter.CTkFont(size=20, weight="bold"))
-        self.logo_label.grid(row=0, column=0, padx=20, pady=(20, 10), columnspan=5)
+        self.logo_label.grid(row=0, column=0, padx=20, pady=(20, 10))
 
         self.path_label = customtkinter.CTkLabel(self, text="Ruta del archivo", anchor="w")
         self.path_label.grid(row=1, column=1, padx=20, pady=(10, 0), sticky="ew")
@@ -36,9 +37,11 @@ class Modify(customtkinter.CTkFrame):
         if file_path and new_body:
             # Modificar archivo
             response_command = self.modify_file(file_path, new_body)
-            write_log("Output - Comando: {}, response: {}".format("Modify", response_command))
+            write_log("Output - Comando: {}, response: {}".format("Modify", response_command["msg"]))
+            messagebox.showinfo("Información", response_command["msg"])
         else:
             write_log("Error - Faltan parámetros para modificar el archivo")
+            messagebox.showerror("Error", "Faltan parámetros para modificar el archivo")
 
     def modify_file(self, file_path, new_body):
         if parameters.get_parameters()["type"] == "cloud":

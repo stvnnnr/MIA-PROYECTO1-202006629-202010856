@@ -3,6 +3,7 @@ import src.utils.parameters as parameters
 import src.storage.cloud as storage_cloud
 import src.storage.local as storage_local
 from src.utils.bitacora import write_log
+from tkinter import messagebox
 
 class Add(customtkinter.CTkFrame):
     
@@ -29,10 +30,18 @@ class Add(customtkinter.CTkFrame):
 
         self.create_button.bind("<Button-1>", self.create_button_left_click_event)
 
+        ## create alert form
+        
+
     def create_button_left_click_event(self):
         if parameters.get_parameters()["type"] == "cloud":
             response_command = storage_cloud.create(self.name_entry.get(), self.content_entry.get(), self.path_entry.get())
         elif parameters.get_parameters()["type"] == "local":
             response_command = storage_local.create(self.name_entry.get(), self.content_entry.get(), self.path_entry.get())
 
-        write_log("Output - Comando: {}, response: {}".format("Create", response_command))
+        if response_command["status"] == "error":
+            messagebox.showerror("Error", response_command["msg"])
+        else:
+            messagebox.showinfo("Info", response_command["msg"])
+            
+        write_log("Output - Comando: {}, response: {}".format("Create", response_command["msg"]))

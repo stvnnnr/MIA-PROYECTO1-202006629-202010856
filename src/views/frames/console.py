@@ -49,8 +49,8 @@ class Console(customtkinter.CTkFrame):
                 self.console.insert("end", alert + "\n")
                 write_log("error: {}".format(alert))
 
-        self.console.insert("end", response_command + "\n")
-        write_log("Output - Comando: {}, response: {}".format(command, response_command))
+        self.console.insert("end", response_command["msg"] + "\n")
+        write_log("Output - Comando: {}, response: {}".format(command, response_command["msg"]))
     
     def exec(self, path):
         path = path.replace("\\", "/")

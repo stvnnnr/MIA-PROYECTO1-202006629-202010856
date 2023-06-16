@@ -1,6 +1,6 @@
 {
     "encrypt_log": false,
-    "type": "cloud",
+    "type": "local",
     "encrypt_read": false,
     "key": "miaproyecto12345",
     "init_exec": false,

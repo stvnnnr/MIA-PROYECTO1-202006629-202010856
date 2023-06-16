@@ -3,6 +3,7 @@ import src.utils.parameters as parameters
 import src.storage.cloud as storage_cloud
 import src.storage.local as storage_local
 from src.utils.bitacora import write_log
+from tkinter import messagebox
 
 class Copy(customtkinter.CTkFrame):
 
@@ -37,9 +38,11 @@ class Copy(customtkinter.CTkFrame):
         if source_path and destination_path:
             # Copiar archivo
             response_command = self.copy_file(source_path, destination_path)
-            write_log("Output - Comando: {}, response: {}".format("Copy", response_command))
+            write_log("Output - Comando: {}, response: {}".format("Copy", response_command["msg"]))
+            messagebox.showinfo("Copiar", response_command["msg"])
         else:
             write_log("Error - Faltan parámetros para copiar el archivo")
+            messagebox.showerror("Error", "Faltan parámetros para copiar el archivo")
 
     def copy_file(self, source_path, destination_path):
         if parameters.get_parameters()["type"] == "cloud":

@@ -1,0 +1,2 @@
+14/06/2023 12:47:31 - Input - Inicio de la aplicación.
+14/06/2023 12:47:43 - Output - Lectura de usuarios.
