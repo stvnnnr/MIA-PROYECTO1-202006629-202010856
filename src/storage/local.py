@@ -1,3 +1,4 @@
+from itertools import count
 import os
 import shutil
 from pydrive2.auth import GoogleAuth
@@ -5,18 +6,17 @@ from pydrive2.drive import GoogleDrive
 from src.utils.parameters import get_parameters
 from src.utils.parameters import update_parameters
 
-myPath = (
-    r"d:\VACAS JUNIO 2023\Archivos\proyectoCopia\Archivos"
-    # r"C:\Users\Edwin Sandoval\Documents\universidad\archivos\Proyecto1\Archivos\local"
-)
+myPath = r"D:\VACAS JUNIO 2023\Archivos\proyect\Archivos"
 
 pathDownload = (
-    r"d:\VACAS JUNIO 2023\Archivos\proyectoCopia\Archivos\Archivos"
+    r"D:\VACAS JUNIO 2023\Archivos\proyect\Archivos\Archivos"
 )
 
-directorio_credenciales = 'credentials_module.json'
+directorio_credenciales = r"D:\VACAS JUNIO 2023\Archivos\proyect\src\storage\credentials_module.json"
 
 def execute(command, parameters):
+    for key in parameters:
+        parameters[key] = parameters[key].strip()
     function = globals().get(command)
     print("function", command, function)
     response = function(**parameters)
@@ -315,7 +315,10 @@ def transfer(from_path, to, mode):
                 "status": "error",
             }
     else:
-        pass#aca va return error
+        return {
+                    "msg": "No es valido el mode:{}".format(mode),
+                    "status": "error",
+                }#aca va return error
     # print("Function: transfer")
     # print("Parameters: from_path={}, to={}, mode={}".format(from_path, to, mode))
 
