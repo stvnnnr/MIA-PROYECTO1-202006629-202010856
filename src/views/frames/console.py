@@ -140,6 +140,7 @@ class Console(customtkinter.CTkFrame):
                 for line in file:
                     self.read_command(line.replace("\n", ""))
                     count += 1
+                count = count-1
                 file.close()
 
         except Exception as e:
@@ -177,8 +178,9 @@ class Console(customtkinter.CTkFrame):
         time_end = time.time()
         times = round(time_end - tiem_start, 2)
         times = self.prepare_time(times)
-
-        return {"msg": "Ejecución exitosa, {} comandos ejecutados, {} tiempo de ejecución".format(count), "status": "success"}
+        return {
+            "msg":f"\proyect\comandos ejecutados {count}, tiempo de ejecución {times}", 
+            "status": "success"}
     
     def prepare_time(self, time):
         if time < 60:

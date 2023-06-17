@@ -344,7 +344,7 @@ def backup():
                         ):
                             i += 1
                         new_filename = f"{filename_without_extension}({i}){file_extension}"
-                        new_filepath = os.path.join(rutaTo + new_filename)
+                        new_filepath = os.path.join(rutaTo +"\\"+ new_filename)
                         shutil.move(rutaFrom, new_filepath)
                         shutil.rmtree(ruta_copia)
                         return { "msg": f"- Backup cloud to local realizado con exito.", "status": "success" }
