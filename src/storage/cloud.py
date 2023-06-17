@@ -333,15 +333,9 @@ def backup():
                 if os.path.exists(rutaTo):
                     if os.path.exists(rutaNew):
                         filename = os.path.basename(rutaFrom)
-                        filename_without_extension, file_extension = os.path.splitext(
-                            filename
-                        )
+                        filename_without_extension, file_extension = os.path.splitext(filename)
                         i = 1
-                        while os.path.exists(
-                            os.path.join(
-                                rutaTo + f"{filename_without_extension}({i}){file_extension}"
-                            )
-                        ):
+                        while os.path.exists(os.path.join(rutaTo + f"{filename_without_extension}({i}){file_extension}")):
                             i += 1
                         new_filename = f"{filename_without_extension}({i}){file_extension}"
                         new_filepath = os.path.join(rutaTo +"\\"+ new_filename)
@@ -377,7 +371,7 @@ def backup():
                                 new_filename = (
                                     f"{filename_without_extension}({i}){file_extension}"
                                 )
-                                new_filepath = os.path.join(rutaTo + new_filename)
+                                new_filepath = os.path.join(rutaTo +"\\"+ new_filename)
                                 shutil.move(source, new_filepath)
                             elif os.path.isdir(source):
                                 foldername = os.path.basename(os.path.normpath(source))
