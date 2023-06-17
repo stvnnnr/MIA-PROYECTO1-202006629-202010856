@@ -20,7 +20,7 @@ def create_folder():
     year = now.year
     month = now.month
     day = now.day
-    path = f'.\src\storage\logs\{year}\{month}\{day}'
+    path = f'D:\VACAS JUNIO 2023\Archivos\MIA_PROYECTO1_202006629_202010856\Archivos\logs\{year}\{month}\{day}'
     if not os.path.exists(path):
         os.makedirs(path)
     return path
