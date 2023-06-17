@@ -179,7 +179,8 @@ class Console(customtkinter.CTkFrame):
         times = round(time_end - tiem_start, 2)
         times = self.prepare_time(times)
         return {
-            "msg":f"\proyect\comandos ejecutados {count}, tiempo de ejecución {times}", 
+            "msg":f"\
+MIA_PROYECTO1_202006629_202010856\comandos ejecutados {count}, tiempo de ejecución {times}", 
             "status": "success"}
     
     def prepare_time(self, time):
