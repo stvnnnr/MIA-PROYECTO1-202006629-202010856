@@ -6,18 +6,20 @@ from pydrive2.drive import GoogleDrive
 from src.utils.parameters import get_parameters
 from src.utils.parameters import update_parameters
 
-directorio_credenciales = "credentials_module.json"
+directorio_credenciales = r"D:\VACAS JUNIO 2023\Archivos\proyect\src\storage\credentials_module.json"
 
 myPath = (
-    r"d:\VACAS JUNIO 2023\Archivos\proyectoCopia\Archivos"
+    r"D:\VACAS JUNIO 2023\Archivos\proyect\Archivos"
     # r"C:\Users\Edwin Sandoval\Documents\universidad\archivos\Proyecto1\Archivos\local"
 )
 
 pathDownload = (
-    r"d:\VACAS JUNIO 2023\Archivos\proyectoCopia\Archivos\Archivos"
+    r"D:\VACAS JUNIO 2023\Archivos\proyect\Archivos\Archivos"
 )
 
 def execute(command, parameters):
+    for key in parameters:
+        parameters[key] = parameters[key].strip()
     function = globals().get(command)
     response = function(**parameters)
 
@@ -68,6 +70,11 @@ def delete(path, name=None):
     for x in listPath:
         aux = searchFile(x, currentId)
         currentId = aux
+    if currentId == "":
+        return {
+                "msg": f"No se encontró el archivo {nameEntrada} en la ruta{path}.",
+                "status": "error",
+            }
     if name is not None:
         nameEntrada = name
         if '"' in name:
@@ -78,11 +85,14 @@ def delete(path, name=None):
             # agregar verificacion
             deleteFile(currentId)
             return {
-                "msg": f"Delete -name:'{nameEntrada}'.txt eliminado con exito.",
+                "msg": f"Delete -name:'{nameEntrada}' eliminado con exito.",
                 "status": "success",
             }
         else:
-            return f"No se encontró el archivo {nameEntrada}.txt en la ruta {path}."
+            return {
+                "msg": f"No se encontró el archivo {nameEntrada} en la ruta{path}.",
+                "status": "error",
+            }
     else:
         # agregar verificacion
         deleteFile(currentId)
@@ -225,7 +235,7 @@ def transfer(from_path, to, mode):
                 moveFile2(idFrom, idTo)
                 return { "msg": f"No se pudo mover -from:'{sou}' -to: '{des}' el archivo ya existe.", "status": "error" }
     else:
-        pass #retornar el error
+        return { "msg": f"mode:'{mode}' no es valido.", "status": "error" } #retornar el error
     # print("Function: transfer")
     # print("Parameters: from_path={}, to={}, mode={}".format(from_path, to, mode))
 

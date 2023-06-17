@@ -1,13 +1,14 @@
 from src.utils.decrypt import Decrypt
 from src.utils.bitacora import write_log
 from src.utils.parameters import get_parameters
+pathUsers = r"D:\VACAS JUNIO 2023\Archivos\proyect\Archivos\miausuarios.txt"
 class ReadUsers:
     @staticmethod
     def readTxtUsers():
         write_log("Output - Lectura de usuarios.")
         usersAux = []
         usersReturn = []
-        with open("C:\\Users\\Edwin Sandoval\\Documents\\universidad\\archivos\\Proyecto1\\Archivos\\miausuarios.txt", "r") as archive:
+        with open(pathUsers, "r") as archive:
             for line in archive:
                 line = line.replace("\n", "")
                 usersAux.append(line)
