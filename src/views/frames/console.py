@@ -8,6 +8,8 @@ from src.utils.parameters import get_parameters
 from src.utils.parameters import update_parameters
 from src.utils.decrypt import Decrypt
 import os
+import time
+from tkinter import messagebox
 
 
 class Console(customtkinter.CTkFrame):
@@ -32,7 +34,7 @@ class Console(customtkinter.CTkFrame):
     def input_set_command_entry_return_event(self, event):
         command = self.input_set_command_entry.get()
         self.input_set_command_entry.delete(0, "end")
-        self.console.insert("end", command + "\n")
+        self.console.insert("end","\n" + "User:\Consola>" + command + "\n")
         self.console.see("end")
         self.read_command(command)
 
@@ -47,17 +49,36 @@ class Console(customtkinter.CTkFrame):
             if response[1].get("llave"):
                 response[1]["key"] = response[1].pop("llave")
 
-            if response[0].lower() == "configure":
-                response_command = storage_local.configure(**response[1])
+            if response[0].lower() == "delete":
+                # recorrer response[1]
+                parameters_delete = ""
+                for key in response[1]:
+                    parameters_delete += "{}: {}\n".format(key, response[1][key])
 
-            elif response[0].lower() == "exec":
+                result = messagebox.askyesno(
+                    "Eliminar archivo",
+                    "¿Estás seguro de que deseas eliminar el archivo?" + "\n" + parameters_delete,
+                )
+                if result == False:
+                    return
+                
+            if response[0].lower() == "exec":
                 response_command = self.exec(**response[1])
-
+            elif response[0].lower() == "configure":
+                response_command = storage_local.configure(**response[1])
+            elif not parameters.get_parameters()["type"]:
+                self.console.insert("end", "Has las configuraciones iniciales\n")
+                write_log("error: No se ha configurado el sistema")
+                return
             elif parameters.get_parameters()["type"] == "cloud":
                 response_command = storage_cloud.execute(response[0], response[1])
-
-            else:
+            elif parameters.get_parameters()["type"] == "local":
                 response_command = storage_local.execute(response[0], response[1])
+            else:
+                response_command = {
+                    "status": "error",
+                    "msg": "No hemos encontrado algo para ejecutar el comando",
+                }
         else:
             for alert in response[1]:
                 self.console.insert("end", alert + "\n")
@@ -84,7 +105,7 @@ class Console(customtkinter.CTkFrame):
             return {"msg": "Error: El path no existe", "status": "error"}
 
     def exec_file(self, path):
-
+        tiem_start = time.time()
         try: 
             count = 1
             file = open(path, "r")
@@ -153,4 +174,16 @@ class Console(customtkinter.CTkFrame):
         parameters["count_exec_nube"] = 0
         parameters["init_exec"] = False
         update_parameters(parameters)
-        return {"msg": "Ejecución exitosa, {} comandos ejecutados".format(count), "status": "success"}
+        time_end = time.time()
+        times = round(time_end - tiem_start, 2)
+        times = self.prepare_time(times)
+
+        return {"msg": "Ejecución exitosa, {} comandos ejecutados, {} tiempo de ejecución".format(count), "status": "success"}
+    
+    def prepare_time(self, time):
+        if time < 60:
+            return f"{time} segundos"
+        else:
+            minutos = time // 60
+            segundos = time % 60
+            return f"{minutos} minutos y {segundos} segundos"
