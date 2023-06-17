@@ -1,8 +1,7 @@
 from src.utils.decrypt import Decrypt
 from src.utils.bitacora import write_log
 from src.utils.parameters import get_parameters
-pathUsers = r"D:\VACAS JUNIO 2023\Archivos\
-MIA_PROYECTO1_202006629_202010856\Archivos\miausuarios.txt"
+pathUsers = r"D:\VACAS JUNIO 2023\Archivos\MIA_PROYECTO1_202006629_202010856\Archivos\miausuarios.txt"
 class ReadUsers:
     @staticmethod
     def readTxtUsers():

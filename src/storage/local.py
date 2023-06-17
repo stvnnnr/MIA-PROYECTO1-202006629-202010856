@@ -6,16 +6,13 @@ from pydrive2.drive import GoogleDrive
 from src.utils.parameters import get_parameters
 from src.utils.parameters import update_parameters
 
-myPath = r"D:\VACAS JUNIO 2023\Archivos\
-MIA_PROYECTO1_202006629_202010856\Archivos"
+myPath = r"D:\VACAS JUNIO 2023\Archivos\MIA_PROYECTO1_202006629_202010856\Archivos"
 
 pathDownload = (
-    r"D:\VACAS JUNIO 2023\Archivos\
-MIA_PROYECTO1_202006629_202010856\Archivos\Archivos"
+    r"D:\VACAS JUNIO 2023\Archivos\MIA_PROYECTO1_202006629_202010856\Archivos\Archivos"
 )
 
-directorio_credenciales = r"D:\VACAS JUNIO 2023\Archivos\
-MIA_PROYECTO1_202006629_202010856\src\storage\credentials_module.json"
+directorio_credenciales = r"D:\VACAS JUNIO 2023\Archivos\MIA_PROYECTO1_202006629_202010856\src\storage\credentials_module.json"
 
 def execute(command, parameters):
     try:
