@@ -18,25 +18,28 @@ pathDownload = (
 )
 
 def execute(command, parameters):
-    for key in parameters:
-        parameters[key] = parameters[key].strip()
-    function = globals().get(command)
-    response = function(**parameters)
+    try:
+        for key in parameters:
+            parameters[key] = parameters[key].strip()
+        function = globals().get(command)
+        response = function(**parameters)
 
-    parameters = get_parameters()
-    if parameters["init_exec"]:
-        parameters["count_exec_nube"] = parameters["count_exec_nube"] + 1
-    update_parameters(parameters)
+        parameters = get_parameters()
+        if parameters["init_exec"]:
+            parameters["count_exec_nube"] = parameters["count_exec_nube"] + 1
+        update_parameters(parameters)
 
-    return response
+        return response
+    except:
+        print("Hubo un error, consulta al admin")
 
 
 def create(name, path, body):
     nameEntrada = name
     pathNuevo = path[1:]
     pathNuevo = pathNuevo[:-1]
-    if '"' in name:
-        name = name.replace('"', "")
+    if '"' in nameEntrada:
+        nameEntrada = nameEntrada.replace('"', "")
     if '"' in pathNuevo:
         pathNuevo = pathNuevo.replace('"', "")
     listPath = pathNuevo.split("/")
@@ -44,20 +47,17 @@ def create(name, path, body):
     for x in listPath:
         aux = createFile_cloud(x, currentId)
         currentId = aux
-    flag = createTxt_Cloud(name, body, currentId)
+    flag = createTxt_Cloud(nameEntrada, body, currentId)
     if flag:
         return {
-            "msg": f"Archivo creado exitosamente: name='{nameEntrada}', path='{path}', body='{body}'",
-            "status": "success",
+            "msg": f"- Archivo creado exitosamente: name='{name}', path='{path}', body='{body}'",
+            "status": "success"
         }
     else:
         return {
-            "msg": f"Error al crear el archivo: name='{nameEntrada}', path='{path}', body='{body}'",
-            "status": "error",
+            "msg": f"- Error al crear el archivo: name='{name}', path='{path}', body='{body}' ya existe",
+            "status": "error"
         }
-    # print("Function: create")
-    # print("Parameters: name={}, path={}, body={}".format(name, path, body))
-    # return "Archivo creado exitosamente: name={}, path={}, body={}".format(name, path, body)
 
 
 def delete(path, name=None):
@@ -72,187 +72,167 @@ def delete(path, name=None):
         currentId = aux
     if currentId == "":
         return {
-                "msg": f"No se encontró el archivo {nameEntrada} en la ruta{path}.",
-                "status": "error",
+                "msg": f"- No se encontró el archivo en la ruta {path}.",
+                "status": "error"
             }
     if name is not None:
         nameEntrada = name
-        if '"' in name:
-            name = name.replace('"', "")
-        aux = searchTxt(name, currentId)
+        if '"' in nameEntrada:
+            nameEntrada = nameEntrada.replace('"', "")
+        aux = searchTxt(nameEntrada, currentId)
         currentId = aux
         if currentId != "":
-            # agregar verificacion
             deleteFile(currentId)
             return {
-                "msg": f"Delete -name:'{nameEntrada}' eliminado con exito.",
-                "status": "success",
+                "msg": f"- Delete -name:'{name}' eliminado con exito.",
+                "status": "success"
             }
         else:
             return {
-                "msg": f"No se encontró el archivo {nameEntrada} en la ruta{path}.",
-                "status": "error",
+                "msg": f"- No se encontró el archivo {name} en la ruta{path}.",
+                "status": "error"
             }
     else:
-        # agregar verificacion
         deleteFile(currentId)
         return {
-            "msg": f"Delete -path:'{path}' eliminado con exito.",
-            "status": "success",
+            "msg": f"- Delete -path:'{path}' eliminado con exito.",
+            "status": "success"
         }
-    # print("Function: delete")
-    # print("Parameters: path={}, name={}".format(path, name))
 
 
 def copy(from_path, to):
     sou = from_path
     des = to
-    if '"' in from_path:
-        from_path = from_path.replace('"', "")
-    if "/" in from_path:
-        from_path = from_path.replace("/", "\\")
-    if '"' in to:
-        to = to.replace('"', "")
-    if "/" in to:
-        to = to.replace("/", "\\")
-    from_path = from_path[1:]
-    to = to[1:]
-    to = to[:-1]
-    listPath = to.split("/")
+    if '"' in sou:
+        sou = sou.replace('"', "")
+    if "/" in sou:
+        sou = sou.replace("/", "\\")
+    if '"' in des:
+        des = des.replace('"', "")
+    if "/" in des:
+        des = des.replace("/", "\\")
+    sou = sou[1:]
+    des = des[1:]
+    des = des[:-1]
+    listPath = des.split("\\")
     currentId = "1eLTdiEeaTRGtNSQbkZ73SZPL_JOYcaen"
     for x in listPath:
         aux = searchFile(x, currentId)
         currentId = aux
     if currentId == "":
-        return f"ruta -to:'{des}' no existe."
+        return {"msg": f"- ruta -to:'{to}' no existe.", "status": "error"}
     idTo = currentId
-    if from_path[-1] == "\\":
-        from_path = from_path[:-1]
-        listPath = from_path.split("/")
-        currentId = "1eLTdiEeaTRGtNSQbkZ73SZPL_JOYcaen"
-        revision = ""
-        for x in listPath:
-            aux = searchFile(x, currentId)
-            currentId = aux
-            revision = x
-        revision = revision + ".txt"
-        ss = searchTxt(revision, idTo)
-        if ss == "":
-            if currentId == "":
-                return {"msg": f"ruta -from:'{sou}' no existe.", "status": "error"}
-            idFrom = currentId
-            copyFile(idFrom, idTo)
-            return {
-                "msg": f"Copy -from:'{sou}' -to: '{des}' copiado con exito.",
-                "status": "success",
-            }
-        else:
-            return {
-                "msg": f"No se pudo copiar -from:'{sou}' -to: '{des}' el archivo ya existe.",
-                "status": "error",
-            }
-    else:
-        listPath = from_path.split("\\")
-        fileActual = listPath[-1]
-        listPath = listPath[:-1]
-        currentId = "1eLTdiEeaTRGtNSQbkZ73SZPL_JOYcaen"
-        for x in listPath:
-            aux = searchFile(x, currentId)
-            currentId = aux
-        aux = searchTxt(fileActual, currentId)
-        ss = searchTxt(fileActual, idTo)
-        if ss == "":
-            if aux == "":
-                return {"msg": f"ruta -from:'{sou}' no existe.", "status": "error"}
-            idFrom = aux
-            copyTxt(idFrom, idTo)
-            return {
-                "msg": f"Copy -from:'{sou}' -to: '{des}' copiado con exito.",
-                "status": "success",
-            }
-        else:
-            return { "msg": f"No se pudo copiar -from:'{sou}' -to: '{des}' el archivo ya existe.", "status": "error" }
-    # print("Function: copy")
-    # print("Parameters: from_path={}, to={}".format(from_path, to))
-
-
-def transfer(from_path, to, mode):
-    if mode == "local":
-        return { "msg": "Transferencia local", "status": "success" }
-    elif mode == "cloud":
-        sou = from_path
-        des = to
-        if '"' in from_path:
-            from_path = from_path.replace('"', "")
-        if "/" in from_path:
-            from_path = from_path.replace("/", "\\")
-        if '"' in to:
-            to = to.replace('"', "")
-        if "/" in to:
-            to = to.replace("/", "\\")
-        from_path = from_path[1:]
-        to = to[1:]
-        to = to[:-1]
-        listPath = to.split("/")
+    if sou[-1] == "\\":
+        sou = sou[:-1]
+        listPath = sou.split("\\")
         currentId = "1eLTdiEeaTRGtNSQbkZ73SZPL_JOYcaen"
         for x in listPath:
             aux = searchFile(x, currentId)
             currentId = aux
         if currentId == "":
-            return f"ruta -to:'{des}' no existe."
+            return {"msg": f"- ruta -from:'{from_path}' no existe.", "status": "error"}
+        idFrom = currentId
+        copyFile(idFrom, idTo)
+        return {
+            "msg": f"- Copy -from:'{from_path}' -to: '{to}' copiado con exito.",
+            "status": "success"
+        }
+    else:
+        listPath = sou.split("\\")
+        fileActual = listPath[-1]#archivo
+        listPath = listPath[:-1]#su ruta
+        currentId = "1eLTdiEeaTRGtNSQbkZ73SZPL_JOYcaen"
+        for x in listPath:
+            aux = searchFile(x, currentId)
+            currentId = aux
+        if currentId != "":
+            aux = searchTxt(fileActual, currentId)#revisa si existe e archivo en la carpeta from
+            ss = searchTxt(fileActual, idTo)#revisa si existe archivo en la carpeta del to
+            if ss == "":
+                if aux == "":
+                    return {"msg": f"- archivo -from:'{from_path}' no existe.", "status": "error"}
+                idFrom = aux
+                copyTxt(idFrom, idTo)
+                return {
+                    "msg": f"- Copy -from:'{from_path}' -to: '{to}' copiado con exito.",
+                    "status": "success"
+                }
+            else:
+                return { "msg": f"- No se pudo copiar -from:'{from_path}' -to: '{to}' el archivo ya existe.", "status": "error" }
+        else:
+            return {"msg": f"- ruta -from:'{from_path}' no existe.", "status": "error"}
+
+
+def transfer(from_path, to, mode):
+    if mode == "local":
+        return {
+                    "msg": "- No es valido el -mode:{} en la configuracion actual".format(mode),
+                    "status": "error"
+                }
+    elif mode == "cloud":
+        sou = from_path
+        des = to
+        if '"' in sou:
+            sou = sou.replace('"', "")
+        if "/" in sou:
+            sou = sou.replace("/", "\\")
+        if '"' in des:
+            des = des.replace('"', "")
+        if "/" in des:
+            des = des.replace("/", "\\")
+        sou = sou[1:]
+        des = des[1:]
+        des = des[:-1]
+        listPath = des.split("\\")
+        currentId = "1eLTdiEeaTRGtNSQbkZ73SZPL_JOYcaen"
+        for x in listPath:
+            aux = searchFile(x, currentId)
+            currentId = aux
+        if currentId == "":
+            return {"msg": f"- ruta -to:'{to}' no existe.", "status": "error"}
         idTo = currentId
-        if from_path[-1] == "\\":
-            from_path = from_path[:-1]
-            listPath = from_path.split("/")
+        if sou[-1] == "\\":
+            sou = sou[:-1]
+            listPath = sou.split("\\")
             currentId = "1eLTdiEeaTRGtNSQbkZ73SZPL_JOYcaen"
-            revision = ""
             for x in listPath:
                 aux = searchFile(x, currentId)
                 currentId = aux
-                revision = x
             if currentId == "":
-                return {"msg": f"ruta -from:'{sou}' no existe.", "status": "error"}
+                return {"msg": f"- ruta -from:'{sou}' no existe.", "status": "error"}
             idFrom = currentId
             moveFolder2(idFrom, idTo)
-            return { "msg": f"Transfer -from:'{sou}' -to: '{des}' movido con exito.", "status": "success" }
+            return { "msg": f"- Transfer -from:'{sou}' -to: '{des}' movido con exito.", "status": "success" }
         else:
-            listPath = from_path.split("\\")
-            fileActual = listPath[-1]
-            listPath = listPath[:-1]
+            listPath = sou.split("\\")
+            fileActual = listPath[-1]#archivo
+            listPath = listPath[:-1]#su ruta
             currentId = "1eLTdiEeaTRGtNSQbkZ73SZPL_JOYcaen"
             for x in listPath:
                 aux = searchFile(x, currentId)
                 currentId = aux
             aux = searchTxt(fileActual, currentId)
-            ss = searchTxt(fileActual, idTo)
-            if ss == "":
-                if aux == "":
-                    return { "msg": f"ruta -from:'{sou}' no existe.", "status": "error" }
-                idFrom = aux
-                moveFile2(idFrom, idTo)
-                return { "msg": f"Transfer -from:'{sou}' -to: '{des}' movido con exito.", "status": "success" }
-            else:
-                moveFile2(idFrom, idTo)
-                return { "msg": f"No se pudo mover -from:'{sou}' -to: '{des}' el archivo ya existe.", "status": "error" }
+            if aux == "":
+                return { "msg": f"- ruta -from:'{from_path}' no existe.", "status": "error" }
+            idFrom = aux
+            moveFile2(idFrom, idTo)
+            return { "msg": f"- Transfer -from:'{from_path}' -to: '{to}' movido con exito.", "status": "success" }
     else:
-        return { "msg": f"mode:'{mode}' no es valido.", "status": "error" } #retornar el error
-    # print("Function: transfer")
-    # print("Parameters: from_path={}, to={}, mode={}".format(from_path, to, mode))
+        return { "msg": f"- mode:'{mode}' no es valido.", "status": "error" }
 
 
 def rename(path, name):
-    new_name = name
     sou = path
-    des = new_name
-    if '"' in path:
-        path = path.replace('"', "")
-    if '"' in new_name:
-        new_name = new_name.replace('"', "")
-    if "/" in path:
-        path = path.replace("/", "\\")
-    path = path[1:]
-    if (".txt") in path:
-        listPath = path.split("\\")
+    des = name
+    if '"' in sou:
+        sou = sou.replace('"', "")
+    if '"' in des:
+        des = des.replace('"', "")
+    if "/" in sou:
+        sou = sou.replace("/", "\\")
+    sou = sou[1:]
+    if (".txt") in sou:
+        listPath = sou.split("\\")
         finalTxt = listPath[-1]
         listPath = listPath[:-1]
         currentId = "1eLTdiEeaTRGtNSQbkZ73SZPL_JOYcaen"
@@ -260,41 +240,37 @@ def rename(path, name):
             aux = searchFile(x, currentId)
             currentId = aux
         if currentId == "":
-            return { "msg": f"ruta -path:'{sou}' no existe.", "status": "error" }
+            return { "msg": f"- ruta -path:'{sou}' no existe.", "status": "error" }
         pathFrom = currentId
         x = searchTxt(finalTxt, pathFrom)
         if x == "":
-            return { "msg": f"ruta -path:'{sou}' no existe.", "status": "error" }
+            return { "msg": f"- ruta -path:'{sou}' no existe.", "status": "error" }
         else:
-            renameTxt(x, new_name)
-            return { "msg": f"Rename -path:'{sou}' con '{des}' renombrado con exito.", "status": "success" }
+            renameTxt(x, des)
+            return { "msg": f"- Rename -path:'{sou}' con '{des}' renombrado con exito.", "status": "success" }
     else:
-        path = path[:-1]
-        listPath = path.split("\\")
+        sou = sou[:-1]
+        listPath = sou.split("\\")
         currentId = "1eLTdiEeaTRGtNSQbkZ73SZPL_JOYcaen"
         for x in listPath:
             aux = searchFile(x, currentId)
             currentId = aux
         if currentId == "":
-            return { "msg": f"ruta -path:'{sou}' no existe.", "status": "error" }
+            return { "msg": f"- ruta -path:'{sou}' no existe.", "status": "error" }
         pathFrom = currentId
-        renameFolder(pathFrom, new_name)
-        return { "msg": f"Rename -path:'{sou}' con '{des}' renombrado con exito.", "status": "success" }
-    # print("Function: rename")
-    # print("Parameters: path={}, new_name={}".format(path, new_name))
+        renameFolder(pathFrom, des)
+        return { "msg": f"- Rename -path:'{sou}' con '{des}' renombrado con exito.", "status": "success" }
 
 
 def modify(path, body):
     sou = path
-    if '"' in path:
-        path = path.replace('"', "")
-    if '"' in body:
-        body = body.replace('"', "")
-    if "/" in path:
-        path = path.replace("/", "\\")
-    path = path[1:]
-    if (".txt") in path:
-        listPath = path.split("\\")
+    if '"' in sou:
+        sou = sou.replace('"', "")
+    if "/" in sou:
+        sou = sou.replace("/", "\\")
+    sou = sou[1:]
+    if (".txt") in sou:
+        listPath = sou.split("\\")
         finalTxt = listPath[-1]
         listPath = listPath[:-1]
         currentId = "1eLTdiEeaTRGtNSQbkZ73SZPL_JOYcaen"
@@ -302,31 +278,27 @@ def modify(path, body):
             aux = searchFile(x, currentId)
             currentId = aux
         if currentId == "":
-            return { "msg": f"ruta -path:'{sou}' no existe.", "status": "error" }
+            return { "msg": f"- ruta -path:'{path}' no existe.", "status": "error" }
         pathFrom = currentId
         x = searchTxt(finalTxt, pathFrom)
         if x == "":
-            return { "msg": f"ruta -path:'{sou}' no existe.", "status": "error" }
+            return { "msg": f"- archivo -path:'{path}' no existe.", "status": "error" }
         else:
             modifyTxt(x, body)
-            return { "msg": f"Modify -path:'{sou}' con '{body}' modificado con exito.", "status": "success" }
+            return { "msg": f"- Modify -path:'{path}' con '{body}' modificado con exito.", "status": "success" }
     else:
-        return { "msg": f"ruta -path:'{sou}' no existe.", "status": "error" }
-    # print("Function: modify")
-    # print("Parameters: path={}, body={}".format(path, body))
+        return { "msg": f"-ruta -path:'{path}' no existe es un archivo", "status": "error" }
 
 
 def add(path, body):
     sou = path
-    if '"' in path:
-        path = path.replace('"', "")
-    if '"' in body:
-        body = body.replace('"', "")
-    if "/" in path:
-        path = path.replace("/", "\\")
-    path = path[1:]
-    if (".txt") in path:
-        listPath = path.split("\\")
+    if '"' in sou:
+        sou = sou.replace('"', "")
+    if "/" in sou:
+        sou = sou.replace("/", "\\")
+    sou = sou[1:]
+    if (".txt") in sou:
+        listPath = sou.split("\\")
         finalTxt = listPath[-1]
         listPath = listPath[:-1]
         currentId = "1eLTdiEeaTRGtNSQbkZ73SZPL_JOYcaen"
@@ -334,16 +306,16 @@ def add(path, body):
             aux = searchFile(x, currentId)
             currentId = aux
         if currentId == "":
-            return { "msg": f"ruta -path:'{sou}' no existe.", "status": "error" }
+            return { "msg": f"- ruta -path:'{path}' no existe.", "status": "error" }
         pathFrom = currentId
         x = searchTxt(finalTxt, pathFrom)
         if x == "":
-            return { "msg": f"ruta -path:'{sou}' no existe.", "status": "error" }
+            return { "msg": f"- archivo -path:'{path}' no existe.", "status": "error" }
         else:
             addTxt(x, body)
-            return { "msg": f"Add -path:'{sou}' con '{body}' agregado con exito.", "status": "success" }
+            return { "msg": f"- Add -path:'{path}' con '{body}' agregado con exito.", "status": "success" }
     else:
-        return { "msg": f"ruta -path:'{sou}' no existe.", "status": "error" }
+        return { "msg": f"- ruta -path:'{path}' no es un archivo valido.", "status": "error" }
 
 
 def backup():
@@ -357,47 +329,76 @@ def backup():
         if os.path.exists(rutaFrom):
             if os.path.isfile(rutaFrom):
                 filename = os.path.basename(rutaFrom)
-                rutaNew = os.path.join(rutaTo+filename)
-                if os.path.exists(rutaNew):
-                    filename = os.path.basename(rutaFrom)
-                    filename_without_extension, file_extension = os.path.splitext(filename)
-                    i = 1
-                    while os.path.exists(os.path.join(rutaTo+f"{filename_without_extension}({i}){file_extension}")):
-                        i += 1
-                    new_filename = f"{filename_without_extension}({i}){file_extension}"
-                    new_filepath = os.path.join(rutaTo+new_filename)
-                    shutil.move(rutaFrom, new_filepath)
+                rutaNew = os.path.join(rutaTo + filename)
+                if os.path.exists(rutaTo):
+                    if os.path.exists(rutaNew):
+                        filename = os.path.basename(rutaFrom)
+                        filename_without_extension, file_extension = os.path.splitext(
+                            filename
+                        )
+                        i = 1
+                        while os.path.exists(
+                            os.path.join(
+                                rutaTo + f"{filename_without_extension}({i}){file_extension}"
+                            )
+                        ):
+                            i += 1
+                        new_filename = f"{filename_without_extension}({i}){file_extension}"
+                        new_filepath = os.path.join(rutaTo + new_filename)
+                        shutil.move(rutaFrom, new_filepath)
+                        shutil.rmtree(ruta_copia)
+                        return { "msg": f"- Backup cloud to local realizado con exito.", "status": "success" }
+                    else:
+                        shutil.move(rutaFrom, rutaTo)
+                        shutil.rmtree(ruta_copia)
+                        return { "msg": f"- Backup cloud to local realizado con exito.", "status": "success" }
                 else:
-                    shutil.move(rutaFrom, rutaTo)
+                    return { "msg": f"- No se pudo realizar Backup cloud to local.", "status": "error" }
             elif os.path.isdir(rutaFrom):
                 for item in os.listdir(rutaFrom):
                     source = os.path.join(rutaFrom +"\\"+ item)
-                    rutaNew = os.path.join(rutaTo+"\\"+item)
-                    if os.path.exists(rutaNew):
-                        if os.path.isfile(source):
-                            filename = os.path.basename(source)
-                            filename_without_extension, file_extension = os.path.splitext(filename)
-                            i = 1
-                            while os.path.exists(os.path.join(rutaTo+f"{filename_without_extension}({i}){file_extension}")):
-                                i += 1
-                            new_filename = f"{filename_without_extension}({i}){file_extension}"
-                            new_filepath = os.path.join(rutaTo+new_filename)
-                            shutil.move(source, new_filepath)
-                        elif os.path.isdir(source):
-                            foldername = os.path.basename(os.path.normpath(source))
-                            i = 1
-                            while os.path.exists(os.path.join(rutaTo+f"{foldername}({i})")):
-                                i += 1
-                            new_foldername = f"{foldername}({i})"
-                            new_folderpath = os.path.join(rutaTo+"\\"+new_foldername)
-                            shutil.move(source, new_folderpath)
+                    rutaNew = os.path.join(rutaTo +"\\"+ item)
+                    if os.path.exists(rutaTo):
+                        if os.path.exists(rutaNew):
+                            if os.path.isfile(source):
+                                filename = os.path.basename(source)
+                                (
+                                    filename_without_extension,
+                                    file_extension,
+                                ) = os.path.splitext(filename)
+                                i = 1
+                                while os.path.exists(
+                                    os.path.join(
+                                        rutaTo
+                                        + f"{filename_without_extension}({i}){file_extension}"
+                                    )
+                                ):
+                                    i += 1
+                                new_filename = (
+                                    f"{filename_without_extension}({i}){file_extension}"
+                                )
+                                new_filepath = os.path.join(rutaTo + new_filename)
+                                shutil.move(source, new_filepath)
+                            elif os.path.isdir(source):
+                                foldername = os.path.basename(os.path.normpath(source))
+                                i = 1
+                                while os.path.exists(
+                                    os.path.join(rutaTo + f"{foldername}({i})")
+                                ):
+                                    i += 1
+                                new_foldername = f"{foldername}({i})"
+                                new_folderpath = os.path.join(rutaTo +"\\"+ new_foldername)
+                                shutil.move(source, new_folderpath)
+                        else:
+                            shutil.move(source, rutaTo)
                     else:
-                        shutil.move(source, rutaTo)
+                        return { "msg": f"- No se pudo realizar Backup cloud to local.", "status": "error" }
+                shutil.rmtree(ruta_copia)
+                return { "msg": f"- Backup cloud to local realizado con exito.", "status": "success" }
+        else:
+            return { "msg": f"- No se pudo realizar Backup cloud to local.", "status": "error" }
     except Exception as e:
-        print(f"Error while moving: {str(e)}")#return
-        return { "msg": f"Error while moving: {str(e)}", "status": "error" }
-    shutil.rmtree(ruta_copia)
-    return { "msg": f"Backup realizado con exito.", "status": "success" }
+        return { "msg": f"- No se pudo realizar Backup cloud to local.", "status": "error" }
 
 
 def backup_with_path(path):
@@ -437,7 +438,6 @@ def login():
     credenciales = GoogleDrive(gauth)
     return credenciales
 
-
 @staticmethod
 def createFile_cloud(query, parent_folder_id):
     name = query
@@ -462,7 +462,6 @@ def createFile_cloud(query, parent_folder_id):
     resultado = folder["id"]
     return resultado
 
-
 @staticmethod
 def createTxt_Cloud(name, body, id_folder):
     credenciales = login()
@@ -473,12 +472,11 @@ def createTxt_Cloud(name, body, id_folder):
         archivo = credenciales.CreateFile(
             {"title": name, "parents": [{"kind": "drive#fileLink", "id": id_folder}]}
         )
+        archivo.SetContentString(body)
+        archivo.Upload()
+        return True
     else:
         return False
-    archivo.SetContentString(body)
-    archivo.Upload()
-    return True
-
 
 @staticmethod
 def searchFile(query, parent_folder_id):
@@ -492,7 +490,6 @@ def searchFile(query, parent_folder_id):
         resultado = f["id"]
         return resultado
     return resultado
-
 
 @staticmethod
 def searchTxt(query, parent_folder_id):
@@ -509,13 +506,11 @@ def searchTxt(query, parent_folder_id):
             return resultado
     return resultado
 
-
 @staticmethod
 def deleteFile(id_archivo):
     credenciales = login()
     archivo = credenciales.CreateFile({"id": id_archivo})
     archivo.Delete()
-
 
 @staticmethod
 def copyFile(idFrom, idTo):
@@ -535,7 +530,6 @@ def copyFile(idFrom, idTo):
             if ss == "":
                 copyTxt(item["id"], idTo)
 
-
 @staticmethod
 def copyTxt(idFrom, idTo):
     credenciales = login()
@@ -547,7 +541,6 @@ def copyTxt(idFrom, idTo):
     contenido = folder.GetContentString()
     new_folder.SetContentString(contenido)
     new_folder.Upload()
-
 
 @staticmethod
 def copyFolder(folder_id, destination_folder_id):
@@ -570,27 +563,6 @@ def copyFolder(folder_id, destination_folder_id):
             copyFolder(item["id"], new_folder["id"])
         else:
             copyTxt(item["id"], new_folder["id"])
-
-
-@staticmethod
-def moveFile(id_archivo, id_folder):
-    credenciales = login()
-    archivo = credenciales.CreateFile({"id": id_archivo})
-    propiedades_ocultas = archivo["parents"]
-    archivo["parents"] = [
-        {
-            "isRoot": False,
-            "kind": "drive#parentReference",
-            "id": id_folder,
-            "selfLink": "https://www.googleapis.com/drive/v2/files/"
-            + id_archivo
-            + "/parents/"
-            + id_folder,
-            "parentLink": "https://www.googleapis.com/drive/v2/files/" + id_folder,
-        }
-    ]
-    archivo.Upload(param={"supportsTeamDrives": True})
-
 
 @staticmethod
 def moveFile2(id_archivo, id_folder):
@@ -634,26 +606,6 @@ def moveFile2(id_archivo, id_folder):
         archivo["title"] = new_file_name
     archivo.Upload(param={"supportsTeamDrives": True})
 
-
-@staticmethod
-def moveFolder(idFrom, idTo):
-    credenciales = login()
-    folder_content = credenciales.ListFile(
-        {"q": f"'{idFrom}' in parents and trashed=false"}
-    ).GetList()
-    for item in folder_content:
-        x = item["title"]
-        if item["mimeType"] == "application/vnd.google-apps.folder":
-            ss = searchFile(x, idTo)
-            if ss == "":
-                moveFile(item["id"], idTo)
-        else:
-            x = x + ".txt"
-            ss = searchTxt(x, idTo)
-            if ss == "":
-                moveFile(item["id"], idTo)
-
-
 @staticmethod
 def moveFolder2(idFrom, idTo):
     credenciales = login()
@@ -661,21 +613,7 @@ def moveFolder2(idFrom, idTo):
         {"q": f"'{idFrom}' in parents and trashed=false"}
     ).GetList()
     for item in folder_content:
-        x = item["title"]
-        if item["mimeType"] == "application/vnd.google-apps.folder":
-            ss = searchFile(x, idTo)
-            if ss == "":
-                moveFile2(item["id"], idTo)
-            else:
-                moveFile2(item["id"], idTo)
-        else:
-            x = x + ".txt"
-            ss = searchTxt(x, idTo)
-            if ss == "":
-                moveFile2(item["id"], idTo)
-            else:
-                moveFile2(item["id"], idTo)
-
+        moveFile2(item["id"], idTo)
 
 @staticmethod
 def renameTxt(idFrom, name):
@@ -683,7 +621,6 @@ def renameTxt(idFrom, name):
     archivo = credenciales.CreateFile({"id": idFrom})
     archivo["title"] = name
     archivo.Upload(param={"supportsTeamDrives": True})
-
 
 @staticmethod
 def renameFolder(id_carpeta, nuevo_nombre):
@@ -699,7 +636,6 @@ def modifyTxt(idFrom, content):
     archivo = credenciales.CreateFile({"id": idFrom})
     archivo.SetContentString(content)
     archivo.Upload()
-    print("Contenido del archivo cambiado exitosamente.")
 
 
 @staticmethod
